@@ -2,125 +2,103 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои задачи v2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>BatonToDoList v2.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
 
-    <!-- Боковая панель папок -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>📁 Папки</h3>
-            <button class="btn-sm" onclick="addFolder()">+</button>
-        </div>
-        <div class="folder-list" id="folderList"></div>
-        <div class="sidebar-footer">
-            <button class="btn-sm" onclick="toggleTheme()">🌓 Тема</button>
-            <select id="langSelect" onchange="changeLang(this.value)">
-                <option value="ru">🇷🇺</option>
-                <option value="en">🇬🇧</option>
-            </select>
-            <a href="https://t.me/Baton_C_H_I_K" target="_blank" class="support-link">💬 Поддержка</a>
-        </div>
-    </div>
-
-    <!-- Кнопка открытия боковой панели -->
-    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
-
-    <!-- Основной контент -->
-    <div class="main-content" id="mainContent">
-        <div class="container">
-            <h1>📋 <span data-lang="title">Мои задачи</span></h1>
-            <p class="subtitle" data-lang="subtitle">Добавляйте задачи, ставьте дедлайны</p>
-
-            <!-- Вкладки -->
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('tasks')">📋 <span data-lang="tasks">Задачи</span></button>
-                <button class="tab" onclick="switchTab('calendar')">📅 <span data-lang="calendar">Календарь</span></button>
-                <button class="tab" onclick="switchTab('stats')">📊 <span data-lang="stats">Статистика</span></button>
-            </div>
-
-            <!-- Панель задач -->
-            <div class="tab-content active" id="tab-tasks">
-                <div class="add-section">
-                    <input type="text" id="taskInput" placeholder="Новая задача..." maxlength="200">
-                    <input type="datetime-local" id="deadlineInput">
-                    <input type="number" id="repeatInput" placeholder="Повторы" min="1" max="999" style="width:80px;">
-                    <input type="file" id="imageInput" accept="image/*" onchange="previewTaskImage()">
-                    <button class="btn-add" onclick="addTask()">+</button>
-                </div>
-                <div id="taskImagePreview" class="image-preview"></div>
-
-                <div class="controls">
-                    <div class="filters">
-                        <button class="active" onclick="setFilter('all')">Все</button>
-                        <button onclick="setFilter('active')">Активные</button>
-                        <button onclick="setFilter('completed')">Завершённые</button>
-                    </div>
-                    <div class="sort-group">
-                        <button class="sort-btn active" onclick="setSort('date')">🕒</button>
-                        <button class="sort-btn" onclick="setSort('deadline')">⏰</button>
-                        <button class="sort-btn" onclick="setSort('alpha')">🔤</button>
-                    </div>
-                </div>
-
-                <ul class="tasks-list" id="tasksList"></ul>
-                <div class="counter" id="counter"></div>
-            </div>
-
-            <!-- Календарь -->
-            <div class="tab-content" id="tab-calendar">
-                <div class="calendar-header">
-                    <button onclick="changeMonth(-1)">←</button>
-                    <span id="calendarMonth"></span>
-                    <button onclick="changeMonth(1)">→</button>
-                </div>
-                <div class="calendar-grid" id="calendarGrid"></div>
-            </div>
-
-            <!-- Статистика -->
-            <div class="tab-content" id="tab-stats">
-                <h2>📊 Статистика</h2>
-                <canvas id="statsChart" width="200" height="200"></canvas>
-                <div id="statsLegend"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно задачи -->
-    <div class="modal" id="taskModal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="modalTitle"></h3>
-            <div class="subtask-list" id="subtaskList"></div>
-            <div class="add-subtask">
-                <input type="text" id="subtaskInput" placeholder="Подзадача...">
-                <button onclick="addSubtask()">+</button>
-            </div>
-            <div class="progress-bar" id="progressBar"></div>
-            <button class="btn" onclick="incrementProgress()">+1</button>
-        </div>
-    </div>
-
-    <!-- Онбординг -->
-    <div class="onboarding" id="onboarding">
+    <div id="onboarding" class="onboarding">
         <div class="onboarding-content">
             <h2>👋 Добро пожаловать!</h2>
-            <p>Это твой список задач. Вот что ты можешь:</p>
-            <ul>
-                <li>📁 Создавай папки для задач</li>
-                <li>🔄 Отслеживай прогресс повторяющихся задач</li>
-                <li>📅 Смотри дедлайны в календаре</li>
-                <li>📊 Анализируй статистику</li>
-            </ul>
-            <button class="btn" onclick="closeOnboarding()">Понятно!</button>
+            <p>Это твой список задач. Создавай папки, добавляй задачи, ставь дедлайны и отслеживай прогресс. Нажми на задачу, чтобы увидеть подробности.</p>
+            <button class="btn" id="onboardingBtn">Понятно!</button>
         </div>
+    </div>
+
+    <div id="app" class="app-container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>📁 Папки</h3>
+                <button class="btn-icon" id="addFolderBtn">+</button>
+            </div>
+            <div class="folder-list" id="folderList"></div>
+            <div class="sidebar-footer">
+                <button class="btn-sm" id="calendarBtn">📅</button>
+                <button class="btn-sm" id="statsBtn">📊</button>
+                <button class="btn-sm" id="supportBtn">💬</button>
+                <button class="btn-sm" id="settingsBtn">⚙️</button>
+            </div>
+        </div>
+
+        <div class="main" id="main">
+            <div class="main-header">
+                <h2 id="currentFolderName">Все задачи</h2>
+                <button class="btn-icon" id="addTaskBtn">+</button>
+            </div>
+            <div class="task-list" id="taskList"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Новая задача</h3>
+            <input type="text" id="taskNameInput" placeholder="Название задачи">
+            <textarea id="taskDescInput" placeholder="Описание"></textarea>
+            <label>Цвет: <input type="color" id="taskColor" value="#e94560"></label>
+            <label>Повторений: <input type="number" id="taskRepeat" value="1" min="1" max="99"></label>
+            <label>Дедлайн: <input type="datetime-local" id="taskDeadline"></label>
+            <label>Картинка: <input type="file" id="taskImage" accept="image/*"></label>
+            <div class="modal-buttons">
+                <button class="btn" id="saveTaskBtn">Сохранить</button>
+                <button class="btn btn-cancel" id="cancelTaskBtn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="folderModal">
+        <div class="modal-content">
+            <h3>Новая папка</h3>
+            <input type="text" id="folderNameInput" placeholder="Название папки">
+            <label>Цвет: <input type="color" id="folderColor" value="#4a90d9"></label>
+            <div class="modal-buttons">
+                <button class="btn" id="saveFolderBtn">Сохранить</button>
+                <button class="btn btn-cancel" id="cancelFolderBtn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="calendar-screen" id="calendarScreen">
+        <div class="calendar-header">
+            <button class="btn-icon" id="calPrev">←</button>
+            <h3 id="calMonthYear"></h3>
+            <button class="btn-icon" id="calNext">→</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <button class="btn" id="closeCalendarBtn">Закрыть</button>
+    </div>
+
+    <div class="stats-screen" id="statsScreen">
+        <h3>📊 Статистика</h3>
+        <canvas id="statsChart" width="200" height="200"></canvas>
+        <div class="stats-legend">
+            <span class="stat-done">✅ Сделано: <span id="statDone">0</span></span>
+            <span class="stat-active">📋 Активно: <span id="statActive">0</span></span>
+            <span class="stat-overdue">⏰ Просрочено: <span id="statOverdue">0</span></span>
+        </div>
+        <button class="btn" id="closeStatsBtn">Закрыть</button>
+    </div>
+
+    <div class="settings-screen" id="settingsScreen">
+        <h3>⚙️ Настройки</h3>
+        <label>Тема: <select id="themeSelect"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label>
+        <label>Язык: <select id="langSelect"><option value="ru">Русский</option><option value="en">English</option></select></label>
+        <button class="btn" id="resetOnboardingBtn">Показать обучение заново</button>
+        <button class="btn" id="closeSettingsBtn">Закрыть</button>
     </div>
 
     <div class="version">v2.0 — BatonToDoList</div>
 
-    <script src="lang/ru.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
