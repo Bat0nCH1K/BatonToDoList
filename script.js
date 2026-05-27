@@ -4,16 +4,80 @@ let tasks = JSON.parse(localStorage.getItem('btd2_tasks') || '[]');
 let currentFolder = 'all';
 let editingTaskId = null;
 let editingFolderId = null;
-let calYear, calMonth;
+let calYear, calMonth, selectedDate = null;
 
-// ====== ТЕМА И ЯЗЫК ======
+// ====== ЯЗЫК ======
+const L = {
+    ru: {
+        welcome: '👋 Добро пожаловать в BatonToDoList!',
+        welcomeText: 'Здесь ты можешь создавать папки для задач, добавлять задачи с дедлайнами, счётчиком повторений и картинками. Нажми ☰ чтобы открыть папки. Нажми 📅 чтобы посмотреть календарь. Нажми 📊 чтобы увидеть статистику. Удачи!',
+        gotIt: 'Понятно!',
+        newTask: 'Новая задача',
+        editTask: 'Редактировать',
+        save: 'Сохранить',
+        cancel: 'Отмена',
+        allTasks: 'Все задачи',
+        noTasks: 'Нет задач. Нажми + чтобы добавить.',
+        newFolder: 'Новая папка',
+        editFolder: 'Редактировать папку',
+        createTask: 'Создать задачу',
+        tasksOnDate: 'Задачи на',
+        noTasksOnDate: 'Нет задач на этот день',
+        stats: '📊 Статистика',
+        done: '✅ Сделано',
+        active: '📋 Активно',
+        overdue: '⏰ Просрочено',
+        settings: '⚙️ Настройки',
+        theme: 'Тема',
+        light: 'Светлая',
+        dark: 'Тёмная',
+        lang: 'Язык',
+        reset: 'Показать обучение заново',
+        close: 'Закрыть'
+    },
+    en: {
+        welcome: '👋 Welcome to BatonToDoList!',
+        welcomeText: 'Here you can create folders for tasks, add tasks with deadlines, repeat counters and images. Press ☰ to open folders. Press 📅 to view calendar. Press 📊 to see statistics. Good luck!',
+        gotIt: 'Got it!',
+        newTask: 'New task',
+        editTask: 'Edit',
+        save: 'Save',
+        cancel: 'Cancel',
+        allTasks: 'All tasks',
+        noTasks: 'No tasks. Press + to add.',
+        newFolder: 'New folder',
+        editFolder: 'Edit folder',
+        createTask: 'Create task',
+        tasksOnDate: 'Tasks on',
+        noTasksOnDate: 'No tasks on this day',
+        stats: '📊 Statistics',
+        done: '✅ Done',
+        active: '📋 Active',
+        overdue: '⏰ Overdue',
+        settings: '⚙️ Settings',
+        theme: 'Theme',
+        light: 'Light',
+        dark: 'Dark',
+        lang: 'Language',
+        reset: 'Show onboarding again',
+        close: 'Close'
+    }
+};
+let lang = localStorage.getItem('btd_lang') || 'ru';
+function t(key) { return L[lang][key] || key; }
+
+// ====== ТЕМА ======
 let currentTheme = localStorage.getItem('btd_theme') || 'light';
 document.body.className = currentTheme;
 if (document.getElementById('themeSelect')) document.getElementById('themeSelect').value = currentTheme;
+if (document.getElementById('langSelect')) document.getElementById('langSelect').value = lang;
 
 // ====== ОНБОРДИНГ ======
 if (!localStorage.getItem('btd_onboarded')) {
     document.getElementById('onboarding').classList.remove('hidden');
+    document.getElementById('onboarding').querySelector('h2').textContent = t('welcome');
+    document.getElementById('onboarding').querySelector('p').textContent = t('welcomeText');
+    document.getElementById('onboardingBtn').textContent = t('gotIt');
 }
 document.getElementById('onboardingBtn').addEventListener('click', () => {
     document.getElementById('onboarding').classList.add('hidden');
@@ -55,14 +119,14 @@ function selectFolder(id) {
     renderTasks();
     document.getElementById('sidebar').classList.remove('active');
     document.getElementById('sidebarOverlay').classList.remove('active');
-    document.getElementById('currentFolderName').textContent = folders.find(f => f.id === id)?.name || 'Все задачи';
+    document.getElementById('currentFolderName').textContent = folders.find(f => f.id === id)?.name || t('allTasks');
 }
 
 document.getElementById('addFolderBtn').addEventListener('click', () => {
     editingFolderId = null;
     document.getElementById('folderNameInput').value = '';
     document.getElementById('folderColor').value = '#4a90d9';
-    document.getElementById('folderModalTitle').textContent = 'Новая папка';
+    document.getElementById('folderModalTitle').textContent = t('newFolder');
     document.getElementById('folderModal').classList.add('active');
 });
 
@@ -72,7 +136,7 @@ function editFolder(id) {
     editingFolderId = id;
     document.getElementById('folderNameInput').value = folder.name;
     document.getElementById('folderColor').value = folder.color;
-    document.getElementById('folderModalTitle').textContent = 'Редактировать папку';
+    document.getElementById('folderModalTitle').textContent = t('editFolder');
     document.getElementById('folderModal').classList.add('active');
 }
 
@@ -99,7 +163,7 @@ function renderTasks() {
     const filtered = currentFolder === 'all' ? tasks : tasks.filter(t => t.folderId === currentFolder);
     
     if (filtered.length === 0) {
-        list.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:40px;">Нет задач. Нажми + чтобы добавить.</div>`;
+        list.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:40px;">${t('noTasks')}</div>`;
         return;
     }
 
@@ -111,9 +175,9 @@ function renderTasks() {
         const overdue = task.deadline && new Date(task.deadline) < new Date() && done < total;
         
         return `
-            <div class="task-item ${cls}" style="border-left:4px solid ${task.color || '#e94560'}" onclick="openTask(${task.id})">
+            <div class="task-item ${cls}" style="border-left:4px solid ${task.color || '#e94560'}">
                 <input type="checkbox" class="task-checkbox" ${done >= total ? 'checked' : ''} onchange="event.stopPropagation();toggleTask(${task.id})">
-                <div class="task-info">
+                <div class="task-info" onclick="event.stopPropagation();openTask(${task.id})">
                     <div class="task-name">${escapeHtml(task.name)}</div>
                     <div class="task-meta">
                         ${task.deadline ? '📅 ' + formatDate(task.deadline) : ''}
@@ -136,7 +200,7 @@ function formatDate(dateStr) {
 // ====== ЗАДАЧИ ======
 document.getElementById('addTaskBtn').addEventListener('click', () => {
     editingTaskId = null;
-    document.getElementById('modalTitle').textContent = 'Новая задача';
+    document.getElementById('modalTitle').textContent = t('newTask');
     document.getElementById('taskNameInput').value = '';
     document.getElementById('taskColor').value = '#e94560';
     document.getElementById('taskRepeat').value = '1';
@@ -152,7 +216,7 @@ function openTask(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
     editingTaskId = id;
-    document.getElementById('modalTitle').textContent = 'Редактировать';
+    document.getElementById('modalTitle').textContent = t('editTask');
     document.getElementById('taskNameInput').value = task.name;
     document.getElementById('taskColor').value = task.color || '#e94560';
     document.getElementById('taskRepeat').value = task.repeat || 1;
@@ -241,14 +305,16 @@ function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); save(); render
 document.getElementById('calendarBtn').addEventListener('click', () => {
     const now = new Date();
     calYear = now.getFullYear(); calMonth = now.getMonth();
+    selectedDate = null;
     renderCalendar();
     document.getElementById('calendarScreen').classList.add('active');
 });
 document.getElementById('closeCalendarBtn').addEventListener('click', () => {
     document.getElementById('calendarScreen').classList.remove('active');
+    renderTasks();
 });
-document.getElementById('calPrev').addEventListener('click', () => { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); });
-document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); });
+document.getElementById('calPrev').addEventListener('click', () => { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } selectedDate = null; renderCalendar(); });
+document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } selectedDate = null; renderCalendar(); });
 
 function renderCalendar() {
     document.getElementById('calMonthYear').textContent = new Date(calYear, calMonth).toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
@@ -262,15 +328,42 @@ function renderCalendar() {
         const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         const hasTask = tasks.some(t => t.deadline && t.deadline.startsWith(dateStr));
         const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d;
-        html += `<div class="calendar-cell ${hasTask ? 'has-task' : ''} ${isToday ? 'today' : ''}" onclick="addTaskForDate('${dateStr}')">${d}</div>`;
+        const isSelected = selectedDate === dateStr;
+        html += `<div class="calendar-cell ${hasTask ? 'has-task' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" onclick="selectCalendarDate('${dateStr}')">${d}</div>`;
     }
     grid.innerHTML = html;
+    
+    // Показываем задачи на выбранную дату
+    const taskListDiv = document.getElementById('calendarTaskList');
+    if (selectedDate) {
+        const dateTasks = tasks.filter(t => t.deadline && t.deadline.startsWith(selectedDate)).sort((a, b) => (a.deadline || '').localeCompare(b.deadline || ''));
+        if (dateTasks.length === 0) {
+            taskListDiv.innerHTML = `<p style="color:var(--text-secondary);text-align:center;">${t('noTasksOnDate')}</p>`;
+        } else {
+            taskListDiv.innerHTML = `<p style="font-weight:600;margin-bottom:8px;">${t('tasksOnDate')} ${formatDate(selectedDate)}</p>` + dateTasks.map(task => `
+                <div class="task-item" style="border-left:4px solid ${task.color || '#e94560'};margin-bottom:6px;" onclick="openTaskFromCalendar(${task.id})">
+                    <div class="task-info">
+                        <div class="task-name">${escapeHtml(task.name)}</div>
+                        <div class="task-meta">${formatDate(task.deadline)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        taskListDiv.innerHTML += `<button class="btn" style="margin-top:10px;width:100%;" onclick="addTaskForDate('${selectedDate}')">+ ${t('createTask')}</button>`;
+    } else {
+        taskListDiv.innerHTML = '';
+    }
+}
+
+function selectCalendarDate(dateStr) {
+    selectedDate = dateStr;
+    renderCalendar();
 }
 
 function addTaskForDate(dateStr) {
     document.getElementById('calendarScreen').classList.remove('active');
     editingTaskId = null;
-    document.getElementById('modalTitle').textContent = 'Новая задача';
+    document.getElementById('modalTitle').textContent = t('newTask');
     document.getElementById('taskNameInput').value = '';
     document.getElementById('taskColor').value = '#e94560';
     document.getElementById('taskRepeat').value = '1';
@@ -280,6 +373,11 @@ function addTaskForDate(dateStr) {
     document.getElementById('previewDeadline').textContent = formatDate(dateStr + 'T12:00');
     document.getElementById('colorPreview').style.background = '#e94560';
     document.getElementById('taskModal').classList.add('active');
+}
+
+function openTaskFromCalendar(id) {
+    document.getElementById('calendarScreen').classList.remove('active');
+    openTask(id);
 }
 
 // ====== СТАТИСТИКА ======
@@ -323,6 +421,8 @@ function renderStats() {
 
 // ====== НАСТРОЙКИ ======
 document.getElementById('settingsBtn').addEventListener('click', () => {
+    document.getElementById('themeSelect').value = currentTheme;
+    document.getElementById('langSelect').value = lang;
     document.getElementById('settingsScreen').classList.add('active');
 });
 document.getElementById('closeSettingsBtn').addEventListener('click', () => {
@@ -333,15 +433,12 @@ document.getElementById('themeSelect').addEventListener('change', function() {
     document.body.className = currentTheme;
     localStorage.setItem('btd_theme', currentTheme);
 });
+document.getElementById('langSelect').addEventListener('change', function() {
+    lang = this.value;
+    localStorage.setItem('btd_lang', lang);
+    location.reload();
+});
 
 // ====== ПОДДЕРЖКА ======
 document.getElementById('supportBtn').addEventListener('click', () => {
-    window.open('https://t.me/Baton_C_H_I_K', '_blank');
-});
-
-function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
-
-// ====== ЗАГРУЗКА ======
-renderFolders();
-renderTasks();
-document.getElementById('currentFolderName').textContent = 'Все задачи';
+    window.open('https://t.m
