@@ -182,8 +182,8 @@ body {
     width: 100% !important; 
     padding: 14px !important; 
 }
-.settings-screen .btn,
-#calendarTaskList .btn,
 .fullscreen .btn {
-    margin-bottom: 14px;
-    }
+    display: block;
+    width: 100%;
+    margin-bottom: 16px;
+}
