@@ -168,3 +168,22 @@ body {
 .settings-screen select { margin-top: 10px; margin-bottom: 20px; display: block; width: 100%; padding: 10px; }
 .settings-screen .btn { margin-top: 20px; display: block; width: 100%; padding: 14px; }
 .settings-screen .btn + .btn { margin-top: 14px; }
+.settings-screen .btn { 
+    margin-top: 20px !important; 
+    display: block !important; 
+    width: 100% !important; 
+    padding: 14px !important; 
+}
+.settings-screen .btn + .btn { 
+    margin-top: 14px !important; 
+}
+#calendarTaskList .btn { 
+    margin-top: 20px !important; 
+    width: 100% !important; 
+    padding: 14px !important; 
+}
+.settings-screen .btn,
+#calendarTaskList .btn,
+.fullscreen .btn {
+    margin-bottom: 14px;
+    }
