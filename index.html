@@ -49,11 +49,11 @@
         <div class="modal-content">
             <h3 id="modalTitle">Новая задача</h3>
             <input type="text" id="taskNameInput" placeholder="Название задачи">
-            <label>📅 Дедлайн: <input type="datetime-local" id="taskDeadline"></label>
+            <label id="labelDeadline">📅 Дедлайн: <input type="datetime-local" id="taskDeadline"></label>
             <div class="preview-deadline" id="previewDeadline"></div>
-            <label>🎨 Цвет: <input type="color" id="taskColor" value="#e94560"><span class="color-preview" id="colorPreview" style="background:#e94560"></span></label>
-            <label>🔢 Повторений: <input type="number" id="taskRepeat" value="1" min="1" max="99"></label>
-            <label>🖼 Картинка: <input type="file" id="taskImage" accept="image/*"></label>
+            <label id="labelColor">🎨 Цвет: <input type="color" id="taskColor" value="#e94560"><span class="color-preview" id="colorPreview" style="background:#e94560"></span></label>
+            <label id="labelRepeat">🔢 Количество раз: <input type="number" id="taskRepeat" value="1" min="1" max="99"></label>
+            <label id="labelImage">🖼 Картинка: <input type="file" id="taskImage" accept="image/*"></label>
             <img id="imagePreview" class="image-preview" style="display:none;">
             <div class="modal-buttons">
                 <button class="btn" id="saveTaskBtn">Сохранить</button>
@@ -104,7 +104,7 @@
         <h3>⚙️ Настройки</h3>
         <label>Тема: <select id="themeSelect"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label>
         <label>Язык: <select id="langSelect"><option value="ru">Русский</option><option value="en">English</option></select></label>
-        <button class="btn" id="resetOnboardingBtn">Показать обучение заново</button>
+        <button class="btn" id="resetOnboardingBtn">Пройти обучение заново</button>
         <button class="btn" id="closeSettingsBtn">Закрыть</button>
     </div>
 
