@@ -6,297 +6,98 @@
     <title>Мои задачи</title>
     <style>
         :root {
-            --bg: #f5f0eb;
-            --card: #ffffff;
-            --text: #2c2c2c;
-            --text-secondary: #7a7a7a;
-            --green: #6b9b6f;
-            --green-light: #e8f3e9;
-            --red: #d97474;
-            --red-light: #fdeaea;
-            --orange: #e0a05a;
-            --orange-light: #fdf4e8;
-            --border: #e8e0d8;
-            --shadow: 0 2px 12px rgba(0,0,0,0.05);
-            --radius: 14px;
-            --transition: 0.25s ease;
+            --bg: #f5f0eb; --card: #ffffff; --text: #2c2c2c;
+            --text-secondary: #7a7a7a; --green: #6b9b6f; --green-light: #e8f3e9;
+            --red: #d97474; --red-light: #fdeaea; --orange: #e0a05a;
+            --orange-light: #fdf4e8; --border: #e8e0d8;
+            --shadow: 0 2px 12px rgba(0,0,0,0.05); --radius: 14px; --transition: 0.25s ease;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            display: flex;
-            justify-content: center;
-            padding: 30px 16px 60px;
-            min-height: 100vh;
-            color: var(--text);
+            background: var(--bg); display: flex; justify-content: center;
+            padding: 30px 16px; min-height: 100vh; color: var(--text);
         }
         .container {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 28px 24px;
-            width: 100%;
-            max-width: 560px;
-            box-shadow: var(--shadow);
+            background: var(--card); border-radius: 20px; padding: 28px 24px;
+            width: 100%; max-width: 560px; box-shadow: var(--shadow);
         }
-        h1 {
-            font-size: 26px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
+        h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+        .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
 
-        /* Поле ввода */
-        .add-section {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        .add-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        .add-row label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            min-width: fit-content;
-        }
+        .add-section { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+        .add-row { display: flex; gap: 8px; align-items: center; }
+        .add-row label { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
         .add-row input[type="text"] {
-            flex: 1;
-            padding: 12px 14px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 15px;
-            outline: none;
-            transition: var(--transition);
-            background: #fafaf8;
+            flex: 1; padding: 12px 14px; border: 2px solid var(--border);
+            border-radius: var(--radius); font-size: 15px; outline: none;
+            transition: var(--transition); background: #fafaf8;
         }
-        .add-row input[type="text"]:focus {
-            border-color: var(--green);
-            background: #fff;
-        }
+        .add-row input[type="text"]:focus { border-color: var(--green); background: #fff; }
         .add-row input[type="datetime-local"] {
-            padding: 12px 14px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 14px;
-            outline: none;
-            color: var(--text);
-            background: #fafaf8;
-            cursor: pointer;
-            transition: var(--transition);
-            min-width: 170px;
+            padding: 12px 14px; border: 2px solid var(--border);
+            border-radius: var(--radius); font-size: 14px; outline: none;
+            color: var(--text); background: #fafaf8; cursor: pointer;
+            transition: var(--transition); min-width: 170px;
         }
-        .add-row input[type="datetime-local"]:focus {
-            border-color: var(--green);
-            background: #fff;
-        }
+        .add-row input[type="datetime-local"]:focus { border-color: var(--green); background: #fff; }
         .btn-add {
-            padding: 12px 20px;
-            background: var(--green);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
+            padding: 12px 20px; background: var(--green); color: white;
+            border: none; border-radius: var(--radius); font-size: 15px;
+            font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap;
         }
-        .btn-add:hover {
-            background: #5a8a5e;
-            transform: translateY(-1px);
-        }
-        .btn-add:active {
-            transform: scale(0.97);
-        }
+        .btn-add:hover { background: #5a8a5e; transform: translateY(-1px); }
+        .btn-add:active { transform: scale(0.97); }
 
-        /* Панель сортировки и фильтров */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .filters {
-            display: flex;
-            gap: 6px;
-        }
+        .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; justify-content: space-between; }
+        .filters { display: flex; gap: 6px; }
         .filters button, .sort-btn {
-            padding: 7px 14px;
-            border: 2px solid var(--border);
-            background: white;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            transition: var(--transition);
-            color: var(--text-secondary);
+            padding: 7px 14px; border: 2px solid var(--border); background: white;
+            border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 500;
+            transition: var(--transition); color: var(--text-secondary);
         }
-        .filters button.active, .sort-btn.active {
-            background: var(--green);
-            color: white;
-            border-color: var(--green);
-        }
-        .sort-group {
-            display: flex;
-            gap: 6px;
-        }
+        .filters button.active, .sort-btn.active { background: var(--green); color: white; border-color: var(--green); }
+        .sort-group { display: flex; gap: 6px; }
 
-        /* Список задач */
-        .tasks-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .tasks-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
         .tasks-list li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px;
-            background: #fafaf8;
-            border-radius: var(--radius);
-            border: 1px solid transparent;
-            transition: var(--transition);
-            animation: slideIn 0.25s ease;
+            display: flex; align-items: center; gap: 10px; padding: 14px;
+            background: #fafaf8; border-radius: var(--radius); border: 1px solid transparent;
+            transition: var(--transition); animation: slideIn 0.25s ease;
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .tasks-list li:hover {
-            border-color: var(--border);
-            background: #fff;
-        }
-        .tasks-list li.completed .task-text {
-            text-decoration: line-through;
-            color: #b0b0b0;
-        }
-        .tasks-list li.overdue {
-            border-left: 4px solid var(--red);
-            background: var(--red-light);
-        }
-        .tasks-list li.due-soon {
-            border-left: 4px solid var(--orange);
-            background: var(--orange-light);
-        }
-        .task-checkbox {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--green);
-            flex-shrink: 0;
-        }
-        .task-content {
-            flex: 1;
-            min-width: 0;
-        }
-        .task-text {
-            font-size: 15px;
-            word-break: break-word;
-            display: block;
-        }
-        .task-deadline {
-            font-size: 12px;
-            margin-top: 3px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .task-deadline.overdue-text {
-            color: var(--red);
-            font-weight: 600;
-        }
-        .task-deadline.normal {
-            color: var(--text-secondary);
-        }
-        .task-deadline.soon-text {
-            color: var(--orange);
-            font-weight: 500;
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .tasks-list li:hover { border-color: var(--border); background: #fff; }
+        .tasks-list li.completed .task-text { text-decoration: line-through; color: #b0b0b0; }
+        .tasks-list li.overdue { border-left: 4px solid var(--red); background: var(--red-light); }
+        .tasks-list li.due-soon { border-left: 4px solid var(--orange); background: var(--orange-light); }
+        .task-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--green); flex-shrink: 0; }
+        .task-content { flex: 1; min-width: 0; }
+        .task-text { font-size: 15px; word-break: break-word; display: block; }
+        .task-deadline { font-size: 12px; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+        .task-deadline.overdue-text { color: var(--red); font-weight: 600; }
+        .task-deadline.normal { color: var(--text-secondary); }
+        .task-deadline.soon-text { color: var(--orange); font-weight: 500; }
         .delete-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #c0b8b0;
-            padding: 4px 6px;
-            border-radius: 8px;
-            transition: var(--transition);
-            flex-shrink: 0;
-            line-height: 1;
+            background: none; border: none; font-size: 18px; cursor: pointer;
+            color: #c0b8b0; padding: 4px 6px; border-radius: 8px;
+            transition: var(--transition); flex-shrink: 0; line-height: 1;
         }
-        .delete-btn:hover {
-            color: var(--red);
-            background: var(--red-light);
-        }
+        .delete-btn:hover { color: var(--red); background: var(--red-light); }
 
-        /* Пустое состояние */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-        }
-        .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-        .empty-state p {
-            font-size: 15px;
-            line-height: 1.5;
-        }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state p { font-size: 15px; line-height: 1.5; }
 
-        /* Счётчик */
-        .counter {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 13px;
-            margin-top: 18px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
-        }
-        .counter .overdue-count {
-            color: var(--red);
-            font-weight: 600;
-        }
+        .counter { text-align: center; color: var(--text-secondary); font-size: 13px; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .counter .overdue-count { color: var(--red); font-weight: 600; }
 
-        /* Версия */
-        .version {
-            text-align: center;
-            color: #c0b8b0;
-            font-size: 11px;
-            margin-top: 16px;
-        }
+        .version { text-align: center; color: #c0b8b0; font-size: 11px; margin-top: 16px; }
 
-        /* Адаптив */
         @media (max-width: 500px) {
-            .add-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .add-row label {
-                margin-bottom: -4px;
-            }
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filters, .sort-group {
-                justify-content: center;
-            }
+            .add-row { flex-direction: column; align-items: stretch; }
+            .add-row label { margin-bottom: -4px; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .filters, .sort-group { justify-content: center; }
         }
     </style>
 </head>
@@ -305,7 +106,6 @@
         <h1>📋 Мои задачи</h1>
         <p class="subtitle">Добавляйте задачи, ставьте дедлайны и получайте уведомления</p>
         
-        <!-- Добавление задачи -->
         <div class="add-section">
             <div class="add-row">
                 <input type="text" id="taskInput" placeholder="Что нужно сделать?" maxlength="200">
@@ -317,7 +117,6 @@
             </div>
         </div>
         
-        <!-- Фильтры и сортировка -->
         <div class="controls">
             <div class="filters">
                 <button class="active" onclick="setFilter('all')">Все</button>
@@ -331,13 +130,9 @@
             </div>
         </div>
         
-        <!-- Список -->
         <ul class="tasks-list" id="tasksList"></ul>
         
-        <!-- Счётчик -->
         <div class="counter" id="counter"></div>
-
-        <!-- Версия -->
         <div class="version">v1.4 — Мои задачи</div>
     </div>
 
@@ -362,240 +157,133 @@
 
         function scheduleNotification(task) {
             cancelNotification(task.id);
-            
             if (!task.deadline || task.completed) return;
-            
             const deadlineTime = new Date(task.deadline).getTime();
             const now = Date.now();
             const delay = deadlineTime - now;
-            
             if (delay <= 0) return;
-            
-            notificationTimers[task.id] = setTimeout(() => {
-                showNotification(task);
-            }, delay);
+            notificationTimers[task.id] = setTimeout(() => { showNotification(task); }, delay);
         }
 
         function cancelNotification(taskId) {
-            if (notificationTimers[taskId]) {
-                clearTimeout(notificationTimers[taskId]);
-                delete notificationTimers[taskId];
-            }
+            if (notificationTimers[taskId]) { clearTimeout(notificationTimers[taskId]); delete notificationTimers[taskId]; }
         }
 
         function showNotification(task) {
             if ('Notification' in window && Notification.permission === 'granted') {
-                const notification = new Notification('⏰ Дедлайн!', {
-                    body: task.text,
-                    icon: 'https://cdn-icons-png.flaticon.com/128/1827/1827343.png',
-                    badge: 'https://cdn-icons-png.flaticon.com/128/1827/1827343.png',
-                    tag: `task-${task.id}`,
-                    requireInteraction: true,
-                    vibrate: [200, 100, 200]
-                });
-                
-                notification.onclick = function() {
-                    window.focus();
-                    notification.close();
-                };
+                const n = new Notification('⏰ Дедлайн!', { body: task.text, icon: 'https://cdn-icons-png.flaticon.com/128/1827/1827343.png', tag: `task-${task.id}`, requireInteraction: true, vibrate: [200, 100, 200] });
+                n.onclick = function() { window.focus(); n.close(); };
             }
-            
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
-                
-                oscillator.start(audioCtx.currentTime);
-                oscillator.stop(audioCtx.currentTime + 1);
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1);
             } catch(e) {}
-            
             delete notificationTimers[task.id];
         }
 
         function rescheduleAllNotifications() {
-            Object.keys(notificationTimers).forEach(id => {
-                clearTimeout(notificationTimers[id]);
-            });
+            Object.keys(notificationTimers).forEach(id => clearTimeout(notificationTimers[id]));
             notificationTimers = {};
-            
-            tasks.forEach(task => {
-                if (!task.completed && task.deadline) {
-                    scheduleNotification(task);
-                }
-            });
+            tasks.forEach(task => { if (!task.completed && task.deadline) scheduleNotification(task); });
         }
 
         function addTask() {
             const input = document.getElementById('taskInput');
             const deadlineInput = document.getElementById('deadlineInput');
             const text = input.value.trim();
-            
             if (text === '') return;
-            
             requestNotificationPermission();
-            
-            const newTask = {
-                id: Date.now(),
-                text: text,
-                completed: false,
-                deadline: deadlineInput.value || null,
-                createdAt: new Date().toISOString()
-            };
-            
+            const newTask = { id: Date.now(), text, completed: false, deadline: deadlineInput.value || null, createdAt: new Date().toISOString() };
             tasks.push(newTask);
-            
-            input.value = '';
-            deadlineInput.value = '';
-            saveTasks();
-            renderTasks();
-            
-            if (newTask.deadline) {
-                scheduleNotification(newTask);
-            }
-            
+            input.value = ''; deadlineInput.value = '';
+            saveTasks(); renderTasks();
+            if (newTask.deadline) scheduleNotification(newTask);
             input.focus();
         }
 
-        function deleteTask(id) {
-            cancelNotification(id);
-            tasks = tasks.filter(task => task.id !== id);
-            saveTasks();
-            renderTasks();
-        }
+        function deleteTask(id) { cancelNotification(id); tasks = tasks.filter(t => t.id !== id); saveTasks(); renderTasks(); }
 
         function toggleTask(id) {
-            const task = tasks.find(task => task.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                if (task.completed) {
-                    cancelNotification(id);
-                } else {
-                    scheduleNotification(task);
-                }
-                saveTasks();
-                renderTasks();
-            }
+            const task = tasks.find(t => t.id === id);
+            if (task) { task.completed = !task.completed; if (task.completed) cancelNotification(id); else scheduleNotification(task); saveTasks(); renderTasks(); }
         }
 
         function setFilter(filter) {
             currentFilter = filter;
-            document.querySelectorAll('.filters button').forEach(btn => {
-                btn.classList.remove('active');
-                if ((filter === 'all' && btn.textContent === 'Все') ||
-                    (filter === 'active' && btn.textContent === 'Активные') ||
-                    (filter === 'completed' && btn.textContent === 'Завершённые')) {
-                    btn.classList.add('active');
-                }
-            });
+            document.querySelectorAll('.filters button').forEach(b => { b.classList.remove('active'); if ((filter==='all'&&b.textContent==='Все')||(filter==='active'&&b.textContent==='Активные')||(filter==='completed'&&b.textContent==='Завершённые')) b.classList.add('active'); });
             renderTasks();
         }
 
         function setSort(sort) {
             currentSort = sort;
-            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.querySelector(`.sort-btn[onclick="setSort('${sort}')"]`);
-            if (activeBtn) activeBtn.classList.add('active');
+            document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+            const ab = document.querySelector(`.sort-btn[onclick="setSort('${sort}')"]`);
+            if (ab) ab.classList.add('active');
             renderTasks();
         }
 
         function getDeadlineStatus(deadline) {
             if (!deadline) return 'none';
-            const now = new Date();
-            const dl = new Date(deadline);
-            const diffMs = dl - now;
-            const diffHours = diffMs / (1000 * 60 * 60);
-            
-            if (diffMs < 0) return 'overdue';
-            if (diffHours <= 24) return 'soon';
-            return 'normal';
+            const now = new Date(), dl = new Date(deadline), h = (dl - now) / 3600000;
+            if (h < 0) return 'overdue'; if (h <= 24) return 'soon'; return 'normal';
         }
 
         function formatDeadline(deadline) {
             if (!deadline) return '';
-            const dl = new Date(deadline);
-            const now = new Date();
-            const diffMs = dl - now;
-            const diffHours = Math.round(diffMs / (1000 * 60 * 60));
-            const diffDays = Math.floor(diffHours / 24);
-            
-            const options = { 
-                day: 'numeric', 
-                month: 'short', 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            };
-            
-            if (dl.getFullYear() !== now.getFullYear()) {
-                options.year = 'numeric';
-            }
-            
-            const formatted = dl.toLocaleDateString('ru-RU', options);
-            
-            if (diffMs < 0) {
-                if (diffDays === 0) return `⚠️ Просрочено (сегодня)`;
-                return `⚠️ Просрочено (${Math.abs(diffDays)} дн. назад)`;
-            }
-            if (diffHours <= 24) {
-                if (diffHours <= 1) return `⏰ Через ${Math.round(diffMs / 60000)} мин.`;
-                return `⏰ Через ${diffHours} ч.`;
-            }
-            if (diffDays <= 3) return `📅 ${formatted} (через ${diffDays} дн.)`;
-            return `📅 ${formatted}`;
+            const dl = new Date(deadline), now = new Date(), ms = dl - now, h = Math.round(ms / 3600000), d = Math.floor(h / 24);
+            const opt = { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
+            if (dl.getFullYear() !== now.getFullYear()) opt.year = 'numeric';
+            const f = dl.toLocaleDateString('ru-RU', opt);
+            if (ms < 0) return d === 0 ? '⚠️ Просрочено (сегодня)' : `⚠️ Просрочено (${Math.abs(d)} дн. назад)`;
+            if (h <= 24) return h <= 1 ? `⏰ Через ${Math.round(ms/60000)} мин.` : `⏰ Через ${h} ч.`;
+            if (d <= 3) return `📅 ${f} (через ${d} дн.)`;
+            return `📅 ${f}`;
         }
 
         function renderTasks() {
-            const list = document.getElementById('tasksList');
-            const counter = document.getElementById('counter');
-            
+            const list = document.getElementById('tasksList'), counter = document.getElementById('counter');
             let filtered = tasks;
             if (currentFilter === 'active') filtered = tasks.filter(t => !t.completed);
             if (currentFilter === 'completed') filtered = tasks.filter(t => t.completed);
-            
-            if (currentSort === 'date') {
-                filtered.sort((a, b) => b.id - a.id);
-            } else if (currentSort === 'deadline') {
-                filtered.sort((a, b) => {
-                    if (!a.deadline && !b.deadline) return b.id - a.id;
-                    if (!a.deadline) return 1;
-                    if (!b.deadline) return -1;
-                    return new Date(a.deadline) - new Date(b.deadline);
-                });
-            } else if (currentSort === 'alpha') {
-                filtered.sort((a, b) => a.text.localeCompare(b.text, 'ru'));
-            }
-            
+            if (currentSort === 'date') filtered.sort((a, b) => b.id - a.id);
+            else if (currentSort === 'deadline') filtered.sort((a, b) => { if (!a.deadline && !b.deadline) return b.id - a.id; if (!a.deadline) return 1; if (!b.deadline) return -1; return new Date(a.deadline) - new Date(b.deadline); });
+            else if (currentSort === 'alpha') filtered.sort((a, b) => a.text.localeCompare(b.text, 'ru'));
+
             if (filtered.length === 0) {
-                const messages = {
-                    'all': ['📝', 'У вас пока нет задач', 'Добавьте первую задачу выше'],
-                    'active': ['✅', 'Все задачи выполнены!', 'Отличная работа!'],
-                    'completed': ['📦', 'Нет завершённых задач', 'Отмечайте задачи галочкой']
-                };
-                const [icon, title, subtitle] = messages[currentFilter];
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">${icon}</div>
-                        <p><strong>${title}</strong><br>${subtitle}</p>
-                    </div>`;
+                const msgs = { 'all': ['📝', 'У вас пока нет задач', 'Добавьте первую задачу выше'], 'active': ['✅', 'Все задачи выполнены!', 'Отличная работа!'], 'completed': ['📦', 'Нет завершённых задач', 'Отмечайте задачи галочкой'] };
+                const [icon, title, subtitle] = msgs[currentFilter];
+                list.innerHTML = `<div class="empty-state"><div class="icon">${icon}</div><p><strong>${title}</strong><br>${subtitle}</p></div>`;
             } else {
                 list.innerHTML = filtered.map(task => {
                     const status = getDeadlineStatus(task.deadline);
-                    let rowClass = '';
-                    if (task.completed) rowClass = 'completed';
-                    else if (status === 'overdue') rowClass = 'overdue';
-                    else if (status === 'soon') rowClass = 'due-soon';
-                    
-                    let deadlineClass = 'normal';
-                    if (status === 'overdue') deadlineClass = 'overdue-text';
-                    else if (status === 'soon') deadlineClass = 'soon-text';
-                    
-                    return `
-                        <li class="${rowClass}">
-                            <input type="checkbox" cla
+                    let rowClass = ''; if (task.completed) rowClass = 'completed'; else if (status === 'overdue') rowClass = 'overdue'; else if (status === 'soon') rowClass = 'due-soon';
+                    let dlClass = 'normal'; if (status === 'overdue') dlClass = 'overdue-text'; else if (status === 'soon') dlClass = 'soon-text';
+                    return `<li class="${rowClass}">
+                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                        <div class="task-content"><span class="task-text">${escapeHtml(task.text)}</span>${task.deadline ? `<span class="task-deadline ${dlClass}">${formatDeadline(task.deadline)}</span>` : ''}</div>
+                        <button class="delete-btn" onclick="deleteTask(${task.id})" title="Удалить">✕</button>
+                    </li>`;
+                }).join('');
+            }
+
+            const active = tasks.filter(t => !t.completed).length;
+            const overdue = tasks.filter(t => !t.completed && getDeadlineStatus(t.deadline) === 'overdue').length;
+            let ct = `Активных: ${active} из ${tasks.length}`;
+            if (overdue > 0) ct += ` | <span class="overdue-count">⚠️ Просрочено: ${overdue}</span>`;
+            counter.innerHTML = ct;
+        }
+
+        function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
+
+        document.getElementById('taskInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') addTask(); });
+
+        renderTasks();
+        rescheduleAllNotifications();
+        setInterval(() => { renderTasks(); }, 30000);
+    </script>
+</body>
+</html>
