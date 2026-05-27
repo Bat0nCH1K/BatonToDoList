@@ -1,23 +1,15 @@
 // ====== ДАННЫЕ ======
-let folders = JSON.parse(localStorage.getItem('btd_folders') || '[{"id":"all","name":"Все задачи","color":"#5c6bc0"}]');
-let tasks = JSON.parse(localStorage.getItem('btd_tasks') || '[]');
+let folders = JSON.parse(localStorage.getItem('btd2_folders') || '[{"id":"all","name":"Все задачи","color":"#5c6bc0"}]');
+let tasks = JSON.parse(localStorage.getItem('btd2_tasks') || '[]');
 let currentFolder = 'all';
 let editingTaskId = null;
+let editingFolderId = null;
 let calYear, calMonth;
 
-// ====== ЯЗЫК ======
-const langs = {
-    ru: { welcome: '👋 Добро пожаловать!', welcomeText: 'Это твой список задач. Создавай папки, добавляй задачи, ставь дедлайны и отслеживай прогресс.', gotIt: 'Понятно!', newTask: 'Новая задача', editTask: 'Редактировать', save: 'Сохранить', cancel: 'Отмена', folders: '📁 Папки', allTasks: 'Все задачи', settings: '⚙️ Настройки', theme: 'Тема', light: 'Светлая', dark: 'Тёмная', lang: 'Язык', resetOnboarding: 'Показать обучение заново', stats: '📊 Статистика', done: '✅ Сделано', active: '📋 Активно', overdue: '⏰ Просрочено', support: '💬 Поддержка', close: 'Закрыть', calendar: '📅 Календарь', repeat: 'Повторений', deadline: 'Дедлайн', color: 'Цвет', image: 'Картинка', name: 'Название задачи', desc: 'Описание', newFolder: 'Новая папка', folderName: 'Название папки' },
-    en: { welcome: '👋 Welcome!', welcomeText: 'This is your to-do list. Create folders, add tasks, set deadlines and track progress.', gotIt: 'Got it!', newTask: 'New task', editTask: 'Edit', save: 'Save', cancel: 'Cancel', folders: '📁 Folders', allTasks: 'All tasks', settings: '⚙️ Settings', theme: 'Theme', light: 'Light', dark: 'Dark', lang: 'Language', resetOnboarding: 'Show onboarding again', stats: '📊 Statistics', done: '✅ Done', active: '📋 Active', overdue: '⏰ Overdue', support: '💬 Support', close: 'Close', calendar: '📅 Calendar', repeat: 'Repeat', deadline: 'Deadline', color: 'Color', image: 'Image', name: 'Task name', desc: 'Description', newFolder: 'New folder', folderName: 'Folder name' }
-};
-let currentLang = localStorage.getItem('btd_lang') || 'ru';
-function t(key) { return langs[currentLang][key] || key; }
-
-// ====== ТЕМА ======
+// ====== ТЕМА И ЯЗЫК ======
 let currentTheme = localStorage.getItem('btd_theme') || 'light';
 document.body.className = currentTheme;
-document.getElementById('themeSelect').value = currentTheme;
-document.getElementById('langSelect').value = currentLang;
+if (document.getElementById('themeSelect')) document.getElementById('themeSelect').value = currentTheme;
 
 // ====== ОНБОРДИНГ ======
 if (!localStorage.getItem('btd_onboarded')) {
@@ -27,26 +19,79 @@ document.getElementById('onboardingBtn').addEventListener('click', () => {
     document.getElementById('onboarding').classList.add('hidden');
     localStorage.setItem('btd_onboarded', '1');
 });
-document.getElementById('resetOnboardingBtn').addEventListener('click', () => {
+document.getElementById('resetOnboardingBtn')?.addEventListener('click', () => {
     localStorage.removeItem('btd_onboarded');
     location.reload();
 });
 
-// ====== СОХРАНЕНИЕ ======
-function save() { localStorage.setItem('btd_folders', JSON.stringify(folders)); localStorage.setItem('btd_tasks', JSON.stringify(tasks)); }
+// ====== САЙДБАР ======
+document.getElementById('hamburgerBtn').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+});
+document.getElementById('sidebarOverlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('active');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+});
 
-// ====== РЕНДЕР ПАПОК ======
+// ====== СОХРАНЕНИЕ ======
+function save() { localStorage.setItem('btd2_folders', JSON.stringify(folders)); localStorage.setItem('btd2_tasks', JSON.stringify(tasks)); }
+
+// ====== ПАПКИ ======
 function renderFolders() {
     const list = document.getElementById('folderList');
     list.innerHTML = folders.map(f => `
         <div class="folder-item ${currentFolder === f.id ? 'active' : ''}" onclick="selectFolder('${f.id}')">
             <span class="folder-color" style="background:${f.color}"></span>
             ${f.name}
-            ${f.id !== 'all' ? `<span style="margin-left:auto;font-size:12px;opacity:0.6" onclick="event.stopPropagation();deleteFolder('${f.id}')">✕</span>` : ''}
+            ${f.id !== 'all' ? `<span style="margin-left:auto;opacity:0.5;cursor:pointer;font-size:14px;" onclick="event.stopPropagation();editFolder('${f.id}')">✎</span>` : ''}
         </div>
     `).join('');
-    document.getElementById('currentFolderName').textContent = folders.find(f => f.id === currentFolder)?.name || t('allTasks');
 }
+
+function selectFolder(id) {
+    currentFolder = id;
+    renderFolders();
+    renderTasks();
+    document.getElementById('sidebar').classList.remove('active');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+    document.getElementById('currentFolderName').textContent = folders.find(f => f.id === id)?.name || 'Все задачи';
+}
+
+document.getElementById('addFolderBtn').addEventListener('click', () => {
+    editingFolderId = null;
+    document.getElementById('folderNameInput').value = '';
+    document.getElementById('folderColor').value = '#4a90d9';
+    document.getElementById('folderModalTitle').textContent = 'Новая папка';
+    document.getElementById('folderModal').classList.add('active');
+});
+
+function editFolder(id) {
+    const folder = folders.find(f => f.id === id);
+    if (!folder) return;
+    editingFolderId = id;
+    document.getElementById('folderNameInput').value = folder.name;
+    document.getElementById('folderColor').value = folder.color;
+    document.getElementById('folderModalTitle').textContent = 'Редактировать папку';
+    document.getElementById('folderModal').classList.add('active');
+}
+
+document.getElementById('saveFolderBtn').addEventListener('click', () => {
+    const name = document.getElementById('folderNameInput').value.trim();
+    if (!name) return;
+    if (editingFolderId) {
+        const f = folders.find(f => f.id === editingFolderId);
+        if (f) { f.name = name; f.color = document.getElementById('folderColor').value; }
+    } else {
+        folders.push({ id: 'f_' + Date.now(), name, color: document.getElementById('folderColor').value });
+    }
+    save(); renderFolders();
+    document.getElementById('folderModal').classList.remove('active');
+});
+
+document.getElementById('cancelFolderBtn').addEventListener('click', () => {
+    document.getElementById('folderModal').classList.remove('active');
+});
 
 // ====== РЕНДЕР ЗАДАЧ ======
 function renderTasks() {
@@ -61,51 +106,65 @@ function renderTasks() {
     list.innerHTML = filtered.map(task => {
         const done = task.progress || 0;
         const total = task.repeat || 1;
-        const pct = Math.round((done / total) * 100);
-        const overdue = task.deadline && new Date(task.deadline) < new Date() && done < total;
+        const pct = total > 1 ? Math.round((done / total) * 100) : (done >= total ? 100 : 0);
         const cls = done >= total ? 'completed' : '';
+        const overdue = task.deadline && new Date(task.deadline) < new Date() && done < total;
         
         return `
-            <div class="task-item ${cls}" style="border-left:4px solid ${task.color || '#e94560'}">
-                <input type="checkbox" class="task-checkbox" ${done >= total ? 'checked' : ''} onchange="toggleTask(${task.id})" onclick="event.stopPropagation()">
-                <div class="task-info" onclick="openTask(${task.id})">
+            <div class="task-item ${cls}" style="border-left:4px solid ${task.color || '#e94560'}" onclick="openTask(${task.id})">
+                <input type="checkbox" class="task-checkbox" ${done >= total ? 'checked' : ''} onchange="event.stopPropagation();toggleTask(${task.id})">
+                <div class="task-info">
                     <div class="task-name">${escapeHtml(task.name)}</div>
                     <div class="task-meta">
-                        ${task.deadline ? '⏰ ' + new Date(task.deadline).toLocaleString('ru-RU') : ''}
-                        ${overdue ? ' ⚠️ Просрочено' : ''}
-                        ${task.subtasks ? ' 📋 ' + task.subtasks.filter(s => s.done).length + '/' + task.subtasks.length : ''}
+                        ${task.deadline ? '📅 ' + formatDate(task.deadline) : ''}
+                        ${overdue ? ' ⚠️' : ''}
                     </div>
-                    ${total > 1 ? `<div class="task-progress"><div class="task-progress-bar" style="width:${pct}%;background:${task.color || '#e94560'}"></div></div> <span style="font-size:12px;margin-left:6px;">${done}/${total}</span>` : ''}
+                    ${task.image ? `<img src="${task.image}" class="task-image">` : ''}
+                    ${total > 1 ? `<div class="task-progress"><div class="task-progress-bar" style="width:${pct}%;background:${task.color}"></div></div><span style="font-size:12px;">${done}/${total}</span>` : ''}
                 </div>
-                <button class="task-delete" onclick="deleteTask(${task.id})">✕</button>
+                <button class="task-delete" onclick="event.stopPropagation();deleteTask(${task.id})">✕</button>
             </div>
         `;
     }).join('');
 }
 
-// ====== ДЕЙСТВИЯ С ЗАДАЧАМИ ======
-function addTask() {
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+// ====== ЗАДАЧИ ======
+document.getElementById('addTaskBtn').addEventListener('click', () => {
     editingTaskId = null;
-    document.getElementById('modalTitle').textContent = t('newTask');
+    document.getElementById('modalTitle').textContent = 'Новая задача';
     document.getElementById('taskNameInput').value = '';
-    document.getElementById('taskDescInput').value = '';
     document.getElementById('taskColor').value = '#e94560';
     document.getElementById('taskRepeat').value = '1';
     document.getElementById('taskDeadline').value = '';
     document.getElementById('taskImage').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('previewDeadline').textContent = '';
+    document.getElementById('colorPreview').style.background = '#e94560';
     document.getElementById('taskModal').classList.add('active');
-}
+});
 
 function openTask(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
     editingTaskId = id;
-    document.getElementById('modalTitle').textContent = t('editTask');
+    document.getElementById('modalTitle').textContent = 'Редактировать';
     document.getElementById('taskNameInput').value = task.name;
-    document.getElementById('taskDescInput').value = task.desc || '';
     document.getElementById('taskColor').value = task.color || '#e94560';
     document.getElementById('taskRepeat').value = task.repeat || 1;
     document.getElementById('taskDeadline').value = task.deadline || '';
+    document.getElementById('previewDeadline').textContent = task.deadline ? formatDate(task.deadline) : '';
+    document.getElementById('colorPreview').style.background = task.color || '#e94560';
+    if (task.image) {
+        document.getElementById('imagePreview').src = task.image;
+        document.getElementById('imagePreview').style.display = 'block';
+    } else {
+        document.getElementById('imagePreview').style.display = 'none';
+    }
     document.getElementById('taskModal').classList.add('active');
 }
 
@@ -125,14 +184,12 @@ document.getElementById('saveTaskBtn').addEventListener('click', async () => {
 
     const taskData = {
         name,
-        desc: document.getElementById('taskDescInput').value,
         color: document.getElementById('taskColor').value,
         repeat: parseInt(document.getElementById('taskRepeat').value) || 1,
         deadline: document.getElementById('taskDeadline').value || null,
         image: imageData || (editingTaskId ? tasks.find(t => t.id === editingTaskId)?.image : ''),
         folderId: currentFolder === 'all' ? null : currentFolder,
         progress: editingTaskId ? tasks.find(t => t.id === editingTaskId)?.progress || 0 : 0,
-        subtasks: editingTaskId ? tasks.find(t => t.id === editingTaskId)?.subtasks || [] : []
     };
 
     if (editingTaskId) {
@@ -150,6 +207,26 @@ document.getElementById('cancelTaskBtn').addEventListener('click', () => {
     document.getElementById('taskModal').classList.remove('active');
 });
 
+document.getElementById('taskDeadline').addEventListener('change', function() {
+    document.getElementById('previewDeadline').textContent = this.value ? formatDate(this.value) : '';
+});
+
+document.getElementById('taskColor').addEventListener('input', function() {
+    document.getElementById('colorPreview').style.background = this.value;
+});
+
+document.getElementById('taskImage').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('imagePreview').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
 function toggleTask(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
@@ -159,24 +236,6 @@ function toggleTask(id) {
 }
 
 function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); save(); renderTasks(); }
-
-// ====== ПАПКИ ======
-document.getElementById('addFolderBtn').addEventListener('click', () => {
-    document.getElementById('folderModal').classList.add('active');
-});
-document.getElementById('saveFolderBtn').addEventListener('click', () => {
-    const name = document.getElementById('folderNameInput').value.trim();
-    if (!name) return;
-    folders.push({ id: 'f_' + Date.now(), name, color: document.getElementById('folderColor').value });
-    save(); renderFolders();
-    document.getElementById('folderModal').classList.remove('active');
-});
-document.getElementById('cancelFolderBtn').addEventListener('click', () => {
-    document.getElementById('folderModal').classList.remove('active');
-});
-
-function selectFolder(id) { currentFolder = id; renderFolders(); renderTasks(); }
-function deleteFolder(id) { folders = folders.filter(f => f.id !== id); if (currentFolder === id) currentFolder = 'all'; tasks = tasks.filter(t => t.folderId !== id); save(); renderFolders(); renderTasks(); }
 
 // ====== КАЛЕНДАРЬ ======
 document.getElementById('calendarBtn').addEventListener('click', () => {
@@ -203,25 +262,24 @@ function renderCalendar() {
         const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         const hasTask = tasks.some(t => t.deadline && t.deadline.startsWith(dateStr));
         const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d;
-        html += `<div class="calendar-cell ${hasTask ? 'has-task' : ''} ${isToday ? 'today' : ''}" onclick="showDayTasks('${dateStr}')">${d}</div>`;
+        html += `<div class="calendar-cell ${hasTask ? 'has-task' : ''} ${isToday ? 'today' : ''}" onclick="addTaskForDate('${dateStr}')">${d}</div>`;
     }
     grid.innerHTML = html;
 }
 
-function showDayTasks(dateStr) {
-    const dayTasks = tasks.filter(t => t.deadline && t.deadline.startsWith(dateStr));
-    if (dayTasks.length === 0) {
-        alert('Нет задач на этот день. Хотите добавить?');
-        document.getElementById('taskDeadline').value = dateStr + 'T00:00';
-        document.getElementById('calendarScreen').classList.remove('active');
-        addTask();
-    } else {
-        currentFolder = 'all';
-        renderFolders();
-        tasks = tasks.filter(t => t.deadline && t.deadline.startsWith(dateStr));
-        renderTasks();
-        document.getElementById('calendarScreen').classList.remove('active');
-    }
+function addTaskForDate(dateStr) {
+    document.getElementById('calendarScreen').classList.remove('active');
+    editingTaskId = null;
+    document.getElementById('modalTitle').textContent = 'Новая задача';
+    document.getElementById('taskNameInput').value = '';
+    document.getElementById('taskColor').value = '#e94560';
+    document.getElementById('taskRepeat').value = '1';
+    document.getElementById('taskDeadline').value = dateStr + 'T12:00';
+    document.getElementById('taskImage').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('previewDeadline').textContent = formatDate(dateStr + 'T12:00');
+    document.getElementById('colorPreview').style.background = '#e94560';
+    document.getElementById('taskModal').classList.add('active');
 }
 
 // ====== СТАТИСТИКА ======
@@ -238,27 +296,27 @@ function renderStats() {
     const overdue = tasks.filter(t => t.deadline && new Date(t.deadline) < new Date() && (t.progress || 0) < (t.repeat || 1)).length;
     const active = tasks.length - done - overdue;
     document.getElementById('statDone').textContent = done;
-    document.getElementById('statActive').textContent = active;
+    document.getElementById('statActive').textContent = Math.max(0, active);
     document.getElementById('statOverdue').textContent = overdue;
 
     const canvas = document.getElementById('statsChart');
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 200, 200);
+    ctx.clearRect(0, 0, 220, 220);
     const total = tasks.length || 1;
     const colors = ['#4caf84', '#e94560', '#ff9800'];
-    const values = [done, active, overdue];
+    const values = [done, Math.max(0, active), overdue];
     let startAngle = -Math.PI / 2;
     values.forEach((v, i) => {
         const sliceAngle = (v / total) * Math.PI * 2;
         ctx.beginPath();
-        ctx.moveTo(100, 100);
-        ctx.arc(100, 100, 80, startAngle, startAngle + sliceAngle);
+        ctx.moveTo(110, 110);
+        ctx.arc(110, 110, 90, startAngle, startAngle + sliceAngle);
         ctx.fillStyle = colors[i];
         ctx.fill();
         startAngle += sliceAngle;
     });
     ctx.beginPath();
-    ctx.arc(100, 100, 40, 0, Math.PI * 2);
+    ctx.arc(110, 110, 45, 0, Math.PI * 2);
     ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg').trim();
     ctx.fill();
 }
@@ -275,22 +333,15 @@ document.getElementById('themeSelect').addEventListener('change', function() {
     document.body.className = currentTheme;
     localStorage.setItem('btd_theme', currentTheme);
 });
-document.getElementById('langSelect').addEventListener('change', function() {
-    currentLang = this.value;
-    localStorage.setItem('btd_lang', currentLang);
-    location.reload();
-});
 
 // ====== ПОДДЕРЖКА ======
 document.getElementById('supportBtn').addEventListener('click', () => {
     window.open('https://t.me/Baton_C_H_I_K', '_blank');
 });
 
-// ====== ОСНОВНЫЕ КНОПКИ ======
-document.getElementById('addTaskBtn').addEventListener('click', addTask);
-
 function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
 
 // ====== ЗАГРУЗКА ======
 renderFolders();
 renderTasks();
+document.getElementById('currentFolderName').textContent = 'Все задачи';
