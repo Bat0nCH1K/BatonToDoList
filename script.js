@@ -176,8 +176,8 @@ function renderTasks() {
         
         return `
             <div class="task-item ${cls}" style="border-left:4px solid ${task.color || '#e94560'}">
-                <input type="checkbox" class="task-checkbox" ${done >= total ? 'checked' : ''} onchange="event.stopPropagation();toggleTask(${task.id})">
-                <div class="task-info" onclick="event.stopPropagation();openTask(${task.id})">
+                <input type="checkbox" class="task-checkbox" ${done >= total ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                <div class="task-info" onclick="openTask(${task.id})">
                     <div class="task-name">${escapeHtml(task.name)}</div>
                     <div class="task-meta">
                         ${task.deadline ? '📅 ' + formatDate(task.deadline) : ''}
@@ -186,7 +186,7 @@ function renderTasks() {
                     ${task.image ? `<img src="${task.image}" class="task-image">` : ''}
                     ${total > 1 ? `<div class="task-progress"><div class="task-progress-bar" style="width:${pct}%;background:${task.color}"></div></div><span style="font-size:12px;">${done}/${total}</span>` : ''}
                 </div>
-                <button class="task-delete" onclick="event.stopPropagation();deleteTask(${task.id})">✕</button>
+                <button class="task-delete" onclick="deleteTask(${task.id})">✕</button>
             </div>
         `;
     }).join('');
@@ -333,7 +333,6 @@ function renderCalendar() {
     }
     grid.innerHTML = html;
     
-    // Показываем задачи на выбранную дату
     const taskListDiv = document.getElementById('calendarTaskList');
     if (selectedDate) {
         const dateTasks = tasks.filter(t => t.deadline && t.deadline.startsWith(selectedDate)).sort((a, b) => (a.deadline || '').localeCompare(b.deadline || ''));
@@ -441,4 +440,12 @@ document.getElementById('langSelect').addEventListener('change', function() {
 
 // ====== ПОДДЕРЖКА ======
 document.getElementById('supportBtn').addEventListener('click', () => {
-    window.open('https://t.m
+    window.open('https://t.me/Baton_C_H_I_K', '_blank');
+});
+
+function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
+
+// ====== ЗАГРУЗКА ======
+renderFolders();
+renderTasks();
+document.getElementById('currentFolderName').textContent = t('allTasks');
