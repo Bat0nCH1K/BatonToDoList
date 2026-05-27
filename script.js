@@ -1,5 +1,3 @@
-alert('Скрипт загружен!');
-
 // ====== ДАННЫЕ ======
 let folders = JSON.parse(localStorage.getItem('btd2_folders') || '[{"id":"all","name":"Все задачи","color":"#5c6bc0"}]');
 let tasks = JSON.parse(localStorage.getItem('btd2_tasks') || '[]');
@@ -35,7 +33,15 @@ const L = {
         dark: 'Тёмная',
         lang: 'Язык',
         reset: 'Показать обучение заново',
-        close: 'Закрыть'
+        close: 'Закрыть',
+        foldersTitle: '📁 Папки',
+        calendar: '📅 Календарь',
+        support: '💬 Поддержка',
+        taskName: 'Название задачи',
+        repeat: '🔢 Повторений',
+        deadline: '📅 Дедлайн',
+        color: '🎨 Цвет',
+        image: '🖼 Картинка'
     },
     en: {
         welcome: '👋 Welcome to BatonToDoList!',
@@ -62,7 +68,15 @@ const L = {
         dark: 'Dark',
         lang: 'Language',
         reset: 'Show onboarding again',
-        close: 'Close'
+        close: 'Close',
+        foldersTitle: '📁 Folders',
+        calendar: '📅 Calendar',
+        support: '💬 Support',
+        taskName: 'Task name',
+        repeat: '🔢 Repeat',
+        deadline: '📅 Deadline',
+        color: '🎨 Color',
+        image: '🖼 Image'
     }
 };
 let lang = localStorage.getItem('btd_lang') || 'ru';
@@ -71,8 +85,6 @@ function t(key) { return L[lang][key] || key; }
 // ====== ТЕМА ======
 let currentTheme = localStorage.getItem('btd_theme') || 'light';
 document.body.className = currentTheme;
-if (document.getElementById('themeSelect')) document.getElementById('themeSelect').value = currentTheme;
-if (document.getElementById('langSelect')) document.getElementById('langSelect').value = lang;
 
 // ====== ОНБОРДИНГ ======
 if (!localStorage.getItem('btd_onboarded')) {
@@ -447,7 +459,19 @@ document.getElementById('supportBtn').addEventListener('click', () => {
 
 function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
 
+// ====== ПЕРЕВОД ИНТЕРФЕЙСА ======
+function translateUI() {
+    document.getElementById('currentFolderName').textContent = t('allTasks');
+    document.querySelector('.sidebar-header h3').textContent = t('foldersTitle');
+    document.getElementById('calendarBtn').textContent = t('calendar');
+    document.getElementById('statsBtn').textContent = t('stats');
+    document.getElementById('supportBtn').textContent = t('support');
+    document.getElementById('settingsBtn').textContent = t('settings');
+    if (document.getElementById('themeSelect')) document.getElementById('themeSelect').value = currentTheme;
+    if (document.getElementById('langSelect')) document.getElementById('langSelect').value = lang;
+}
+
 // ====== ЗАГРУЗКА ======
 renderFolders();
 renderTasks();
-document.getElementById('currentFolderName').textContent = t('allTasks');
+translateUI();
