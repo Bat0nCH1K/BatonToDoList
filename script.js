@@ -6,86 +6,6 @@ let editingTaskId = null;
 let editingFolderId = null;
 let calYear, calMonth, selectedDate = null;
 
-// ====== ЯЗЫК ======
-const L = {
-    ru: {
-        welcome: '👋 Добро пожаловать в BatonToDoList!',
-        welcomeText: 'Здесь ты можешь создавать папки для задач, добавлять задачи с дедлайнами, счётчиком повторений и картинками. Нажми ☰ чтобы открыть папки. Нажми 📅 чтобы посмотреть календарь. Нажми 📊 чтобы увидеть статистику. Удачи!',
-        gotIt: 'Понятно!',
-        newTask: 'Новая задача',
-        editTask: 'Редактировать',
-        save: 'Сохранить',
-        cancel: 'Отмена',
-        allTasks: 'Все задачи',
-        noTasks: 'Нет задач. Нажми + чтобы добавить.',
-        newFolder: 'Новая папка',
-        editFolder: 'Редактировать папку',
-        createTask: 'Создать задачу',
-        tasksOnDate: 'Задачи на',
-        noTasksOnDate: 'Нет задач на этот день',
-        stats: '📊 Статистика',
-        done: '✅ Сделано',
-        active: '📋 Активно',
-        overdue: '⏰ Просрочено',
-        settings: '⚙️ Настройки',
-        theme: 'Тема',
-        light: 'Светлая',
-        dark: 'Тёмная',
-        lang: 'Язык',
-        reset: 'Показать обучение заново',
-        close: 'Закрыть',
-        foldersTitle: '📁 Папки',
-        calendar: '📅 Календарь',
-        support: '💬 Поддержка',
-        taskName: 'Название задачи',
-        repeat: '🔢 Повторений',
-        deadline: '📅 Дедлайн',
-        color: '🎨 Цвет',
-        image: '🖼 Картинка'
-    },
-    en: {
-        welcome: '👋 Welcome to BatonToDoList!',
-        welcomeText: 'Here you can create folders for tasks, add tasks with deadlines, repeat counters and images. Press ☰ to open folders. Press 📅 to view calendar. Press 📊 to see statistics. Good luck!',
-        gotIt: 'Got it!',
-        newTask: 'New task',
-        editTask: 'Edit',
-        save: 'Save',
-        cancel: 'Cancel',
-        allTasks: 'All tasks',
-        noTasks: 'No tasks. Press + to add.',
-        newFolder: 'New folder',
-        editFolder: 'Edit folder',
-        createTask: 'Create task',
-        tasksOnDate: 'Tasks on',
-        noTasksOnDate: 'No tasks on this day',
-        stats: '📊 Statistics',
-        done: '✅ Done',
-        active: '📋 Active',
-        overdue: '⏰ Overdue',
-        settings: '⚙️ Settings',
-        theme: 'Theme',
-        light: 'Light',
-        dark: 'Dark',
-        lang: 'Language',
-        reset: 'Show onboarding again',
-        close: 'Close',
-        foldersTitle: '📁 Folders',
-        calendar: '📅 Calendar',
-        support: '💬 Support',
-        taskName: 'Task name',
-        repeat: '🔢 Repeat',
-        deadline: '📅 Deadline',
-        color: '🎨 Color',
-        image: '🖼 Image'
-    }
-};
-let lang = localStorage.getItem('btd_lang') || 'ru';
-function t(key) { return L[lang][key] || key; }
-
-// ====== ТЕМА ======
-let currentTheme = localStorage.getItem('btd_theme') || 'light';
-document.body.className = currentTheme;
-
 // ====== ОНБОРДИНГ ======
 if (!localStorage.getItem('btd_onboarded')) {
     document.getElementById('onboarding').classList.remove('hidden');
@@ -331,7 +251,8 @@ document.getElementById('calPrev').addEventListener('click', () => { calMonth--;
 document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } selectedDate = null; renderCalendar(); });
 
 function renderCalendar() {
-    document.getElementById('calMonthYear').textContent = new Date(calYear, calMonth).toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+    const monthName = new Date(calYear, calMonth).toLocaleString(lang === 'ru' ? 'ru-RU' : 'en-US', { month: 'long' });
+    document.getElementById('calMonthYear').textContent = t(monthName) + ' ' + calYear;
     const grid = document.getElementById('calendarGrid');
     const firstDay = new Date(calYear, calMonth, 1).getDay() || 7;
     const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
@@ -368,10 +289,7 @@ function renderCalendar() {
     }
 }
 
-function selectCalendarDate(dateStr) {
-    selectedDate = dateStr;
-    renderCalendar();
-}
+function selectCalendarDate(dateStr) { selectedDate = dateStr; renderCalendar(); }
 
 function addTaskForDate(dateStr) {
     document.getElementById('calendarScreen').classList.remove('active');
@@ -388,19 +306,11 @@ function addTaskForDate(dateStr) {
     document.getElementById('taskModal').classList.add('active');
 }
 
-function openTaskFromCalendar(id) {
-    document.getElementById('calendarScreen').classList.remove('active');
-    openTask(id);
-}
+function openTaskFromCalendar(id) { document.getElementById('calendarScreen').classList.remove('active'); openTask(id); }
 
 // ====== СТАТИСТИКА ======
-document.getElementById('statsBtn').addEventListener('click', () => {
-    renderStats();
-    document.getElementById('statsScreen').classList.add('active');
-});
-document.getElementById('closeStatsBtn').addEventListener('click', () => {
-    document.getElementById('statsScreen').classList.remove('active');
-});
+document.getElementById('statsBtn').addEventListener('click', () => { renderStats(); document.getElementById('statsScreen').classList.add('active'); });
+document.getElementById('closeStatsBtn').addEventListener('click', () => { document.getElementById('statsScreen').classList.remove('active'); });
 
 function renderStats() {
     const done = tasks.filter(t => (t.progress || 0) >= (t.repeat || 1)).length;
@@ -438,24 +348,12 @@ document.getElementById('settingsBtn').addEventListener('click', () => {
     document.getElementById('langSelect').value = lang;
     document.getElementById('settingsScreen').classList.add('active');
 });
-document.getElementById('closeSettingsBtn').addEventListener('click', () => {
-    document.getElementById('settingsScreen').classList.remove('active');
-});
-document.getElementById('themeSelect').addEventListener('change', function() {
-    currentTheme = this.value;
-    document.body.className = currentTheme;
-    localStorage.setItem('btd_theme', currentTheme);
-});
-document.getElementById('langSelect').addEventListener('change', function() {
-    lang = this.value;
-    localStorage.setItem('btd_lang', lang);
-    location.reload();
-});
+document.getElementById('closeSettingsBtn').addEventListener('click', () => { document.getElementById('settingsScreen').classList.remove('active'); });
+document.getElementById('themeSelect').addEventListener('change', function() { currentTheme = this.value; document.body.className = currentTheme; localStorage.setItem('btd_theme', currentTheme); });
+document.getElementById('langSelect').addEventListener('change', function() { lang = this.value; localStorage.setItem('btd_lang', lang); location.reload(); });
 
 // ====== ПОДДЕРЖКА ======
-document.getElementById('supportBtn').addEventListener('click', () => {
-    window.open('https://t.me/Baton_C_H_I_K', '_blank');
-});
+document.getElementById('supportBtn').addEventListener('click', () => { window.open('https://t.me/Baton_C_H_I_K', '_blank'); });
 
 function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
 
@@ -467,6 +365,10 @@ function translateUI() {
     document.getElementById('statsBtn').textContent = t('stats');
     document.getElementById('supportBtn').textContent = t('support');
     document.getElementById('settingsBtn').textContent = t('settings');
+    document.getElementById('closeCalendarBtn').textContent = t('close');
+    document.getElementById('closeStatsBtn').textContent = t('close');
+    document.getElementById('closeSettingsBtn').textContent = t('close');
+    document.getElementById('resetOnboardingBtn').textContent = t('reset');
     if (document.getElementById('themeSelect')) document.getElementById('themeSelect').value = currentTheme;
     if (document.getElementById('langSelect')) document.getElementById('langSelect').value = lang;
 }
