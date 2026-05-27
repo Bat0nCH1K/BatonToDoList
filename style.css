@@ -64,7 +64,7 @@ body {
 .folder-item:hover { background: var(--border); }
 .folder-item.active { background: var(--accent); color: white; }
 .folder-color { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-.sidebar-footer { display: flex; gap: 8px; flex-wrap: wrap; }
+.sidebar-footer { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
 
 /* Задачи */
 .task-list { display: flex; flex-direction: column; gap: 10px; }
@@ -148,8 +148,11 @@ body {
 .calendar-cell.has-task { border: 2px solid var(--accent); }
 .calendar-cell.today { background: var(--accent); color: white; }
 .calendar-cell.selected { box-shadow: 0 0 0 3px var(--orange); }
-#calendarTaskList { margin-top: 10px; }
+#calendarTaskList { margin-top: 20px; }
+#calendarTaskList .task-item { margin-bottom: 10px; }
+#calendarTaskList .btn { margin-top: 16px; }
 .stats-legend { display: flex; gap: 20px; font-size: 14px; margin: 20px 0; }
 .version { text-align: center; color: var(--text-secondary); font-size: 11px; margin-top: 30px; }
-.settings-screen label { margin-bottom: 12px; display: block; }
-.settings-screen select { margin-top: 6px; }
+.settings-screen label { margin-bottom: 20px; display: block; }
+.settings-screen select { margin-top: 8px; }
+.settings-screen .btn { margin-top: 16px; }
