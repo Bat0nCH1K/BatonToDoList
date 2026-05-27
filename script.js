@@ -1,3 +1,5 @@
+alert('Скрипт загружен!');
+
 // ====== ДАННЫЕ ======
 let folders = JSON.parse(localStorage.getItem('btd2_folders') || '[{"id":"all","name":"Все задачи","color":"#5c6bc0"}]');
 let tasks = JSON.parse(localStorage.getItem('btd2_tasks') || '[]');
