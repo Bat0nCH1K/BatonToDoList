@@ -3,7 +3,7 @@
 :root {
     --bg: #f5f0eb; --card: #ffffff; --text: #2c2c2c; --text-secondary: #7a7a7a;
     --accent: #5c6bc0; --green: #6b9b6f; --red: #d97474; --orange: #e0a05a;
-    --border: #e0d8d0; --shadow: 0 2px 12px rgba(0,0,0,0.05); --radius: 14px;
+    --border: #e0d8d0; --radius: 14px;
 }
 
 body.dark {
@@ -18,7 +18,6 @@ body {
     transition: background 0.3s, color 0.3s; padding: 16px; max-width: 600px; margin: 0 auto;
 }
 
-/* Онбординг */
 .onboarding {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
@@ -32,17 +31,13 @@ body {
 .onboarding-content h2 { margin-bottom: 14px; font-size: 22px; }
 .onboarding-content p { margin-bottom: 24px; color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
 
-/* Шапка */
 .header {
     display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
     position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 10px 0;
 }
 .header h2 { flex: 1; font-size: 22px; }
-.hamburger {
-    font-size: 24px; background: none; border: none; color: var(--text); cursor: pointer; padding: 8px;
-}
+.hamburger { font-size: 24px; background: none; border: none; color: var(--text); cursor: pointer; padding: 8px; }
 
-/* Сайдбар */
 .sidebar-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.5); z-index: 200; display: none;
@@ -58,62 +53,51 @@ body {
 .folder-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
 .folder-item {
     padding: 12px 14px; border-radius: 10px; cursor: pointer;
-    font-size: 16px; color: var(--text); transition: 0.2s;
-    display: flex; align-items: center; gap: 10px;
+    font-size: 16px; color: var(--text); display: flex; align-items: center; gap: 10px;
 }
 .folder-item:hover { background: var(--border); }
 .folder-item.active { background: var(--accent); color: white; }
 .folder-color { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+
 .sidebar-footer { 
     display: grid; 
     grid-template-columns: 1fr 1fr; 
-    gap: 12px; 
-    margin-top: 24px; 
+    gap: 10px; 
+    margin-top: 20px; 
 }
 .sidebar-footer .btn-sm { 
-    padding: 12px 8px; 
+    padding: 14px 6px; 
     background: var(--card); 
     color: var(--text);
     border: 1px solid var(--border); 
     border-radius: 8px; 
     cursor: pointer;
-    font-size: 14px; 
-    transition: 0.2s; 
+    font-size: 13px; 
     text-align: center;
     width: 100%;
+    margin: 0;
 }
 .btn-sm:hover { background: var(--accent); color: white; border-color: var(--accent); }
 
-/* Задачи */
 .task-list { display: flex; flex-direction: column; gap: 10px; }
 .task-item {
     background: var(--card); border-radius: var(--radius); padding: 16px;
-    border: 1px solid var(--border); transition: 0.2s;
-    display: flex; align-items: center; gap: 12px;
+    border: 1px solid var(--border); display: flex; align-items: center; gap: 12px;
 }
-.task-item:active { transform: scale(0.98); }
 .task-item.completed .task-name { text-decoration: line-through; color: var(--text-secondary); }
-.task-checkbox {
-    width: 24px; height: 24px; accent-color: var(--green); flex-shrink: 0; cursor: pointer;
-    pointer-events: auto;
-}
+.task-checkbox { width: 24px; height: 24px; accent-color: var(--green); flex-shrink: 0; cursor: pointer; }
 .task-info { flex: 1; min-width: 0; }
 .task-name { font-size: 16px; font-weight: 500; word-break: break-word; }
 .task-meta { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
 .task-image { max-width: 80px; max-height: 60px; border-radius: 8px; margin-top: 6px; }
 .task-progress { height: 6px; background: var(--border); border-radius: 3px; margin-top: 6px; }
-.task-progress-bar { height: 100%; border-radius: 3px; transition: width 0.3s; }
-.task-delete {
-    background: none; border: none; color: var(--red); cursor: pointer;
-    font-size: 20px; padding: 6px; flex-shrink: 0;
-}
+.task-progress-bar { height: 100%; border-radius: 3px; }
+.task-delete { background: none; border: none; color: var(--red); cursor: pointer; font-size: 20px; padding: 6px; flex-shrink: 0; }
 
-/* Кнопки */
 .btn {
     padding: 12px 24px; background: var(--accent); color: white; border: none;
-    border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 15px; transition: 0.2s;
+    border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 15px;
 }
-.btn:active { opacity: 0.8; }
 .btn-cancel { background: var(--text-secondary); }
 .btn-icon {
     width: 40px; height: 40px; border-radius: 10px; border: none;
@@ -121,7 +105,6 @@ body {
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
-/* Модалки */
 .modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center;
@@ -133,17 +116,16 @@ body {
     width: 100%; max-width: 420px; color: var(--text);
     display: flex; flex-direction: column; gap: 14px;
 }
-.modal-content input, .modal-content textarea, .modal-content select {
+.modal-content input, .modal-content select {
     padding: 12px; border-radius: 8px; border: 1px solid var(--border);
     background: var(--bg); color: var(--text); font-family: inherit; font-size: 15px;
 }
-.modal-content label { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.modal-content label { display: flex; align-items: center; gap: 8px; font-size: 14px; flex-wrap: wrap; }
 .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
 .color-preview { width: 24px; height: 24px; border-radius: 6px; display: inline-block; }
 .image-preview { max-width: 100%; max-height: 150px; border-radius: 10px; }
 .preview-deadline { font-size: 13px; color: var(--text-secondary); }
 
-/* Полноэкранные */
 .fullscreen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: var(--bg); display: none; flex-direction: column;
@@ -160,12 +142,15 @@ body {
 .calendar-cell.has-task { border: 2px solid var(--accent); }
 .calendar-cell.today { background: var(--accent); color: white; }
 .calendar-cell.selected { box-shadow: 0 0 0 3px var(--orange); }
-#calendarTaskList { margin-top: 30px; }
-#calendarTaskList .task-item { margin-bottom: 14px; }
-#calendarTaskList .btn { margin-top: 24px; width: 100%; padding: 14px; }
+
+#calendarTaskList { margin-top: 24px; }
+#calendarTaskList .task-item { margin-bottom: 12px; }
+#calendarTaskList .btn { margin-top: 20px; width: 100%; padding: 14px; }
+
 .stats-legend { display: flex; gap: 20px; font-size: 14px; margin: 20px 0; }
 .version { text-align: center; color: var(--text-secondary); font-size: 11px; margin-top: 30px; }
-.settings-screen label { margin-bottom: 30px; display: block; font-size: 16px; }
-.settings-screen select { margin-top: 12px; margin-bottom: 24px; display: block; width: 100%; padding: 10px; }
-.settings-screen .btn { margin-top: 24px; display: block; width: 100%; padding: 14px; }
-.settings-screen .btn + .btn { margin-top: 16px; }
+
+.settings-screen label { margin-bottom: 24px; display: block; font-size: 16px; }
+.settings-screen select { margin-top: 10px; margin-bottom: 20px; display: block; width: 100%; padding: 10px; }
+.settings-screen .btn { margin-top: 20px; display: block; width: 100%; padding: 14px; }
+.settings-screen .btn + .btn { margin-top: 14px; }
