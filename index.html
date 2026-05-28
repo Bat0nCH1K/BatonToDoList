@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>BatonToDoList v2.1</title>
+    <title>BatonToDoList v2.2</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
@@ -17,14 +17,11 @@
     </div>
 
     <div id="app">
-        <!-- Шапка -->
         <div class="header">
             <button class="hamburger" id="hamburgerBtn">☰</button>
             <h2 id="currentFolderName">Все задачи</h2>
             <button class="btn-icon" id="addTaskBtn">+</button>
         </div>
-
-        <!-- Боковая панель -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -39,12 +36,9 @@
                 <button class="btn-sm" id="settingsBtn">⚙️ Настройки</button>
             </div>
         </div>
-
-        <!-- Список задач -->
         <div class="task-list" id="taskList"></div>
     </div>
 
-    <!-- Модалка задачи -->
     <div class="modal" id="taskModal">
         <div class="modal-content">
             <h3 id="modalTitle">Новая задача</h3>
@@ -62,7 +56,6 @@
         </div>
     </div>
 
-    <!-- Модалка папки -->
     <div class="modal" id="folderModal">
         <div class="modal-content">
             <h3 id="folderModalTitle">Новая папка</h3>
@@ -75,7 +68,6 @@
         </div>
     </div>
 
-    <!-- Календарь -->
     <div class="fullscreen" id="calendarScreen">
         <div class="calendar-header">
             <button class="btn-icon" id="calPrev">←</button>
@@ -87,7 +79,6 @@
         <button class="btn" id="closeCalendarBtn">Закрыть</button>
     </div>
 
-    <!-- Статистика -->
     <div class="fullscreen" id="statsScreen">
         <h3>📊 Статистика</h3>
         <canvas id="statsChart" width="220" height="220"></canvas>
@@ -99,7 +90,6 @@
         <button class="btn" id="closeStatsBtn">Закрыть</button>
     </div>
 
-    <!-- Настройки -->
     <div class="fullscreen" id="settingsScreen">
         <h3>⚙️ Настройки</h3>
         <label>Тема: <select id="themeSelect"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label>
@@ -108,9 +98,8 @@
         <button class="btn" id="closeSettingsBtn">Закрыть</button>
     </div>
 
-    <div class="version">v2.1 — BatonToDoList</div>
+    <div class="version">v2.2 — BatonToDoList</div>
 
-    <script src="lang.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
