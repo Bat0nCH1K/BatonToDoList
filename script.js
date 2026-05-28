@@ -25,17 +25,69 @@ function renderFolders() {
     document.getElementById('folderList').innerHTML = folders.map(f => `
         <div class="folder-item ${currentFolder===f.id?'active':''}" onclick="selectFolder('${f.id}')">
             <span class="folder-color" style="background:${f.color}"></span>${f.id==='all'?t('allTasks'):f.name}
-            ${f.id!=='all'?`<span style="margin-left:auto;opacity:0.5;cursor:pointer;font-size:14px;" onclick="event.stopPropagation();deleteFolder('${f.id}')">✕</span>`:''}
+            ${f.id!=='all'?`<span style="margin-left:auto;opacity:0.5;cursor:pointer;font-size:14px;" onclick="event.stopPropagation();editFolder('${f.id}')">✎</span>`:''}
         </div>`).join('');
 }
 
 function selectFolder(id) { currentFolder=id; renderFolders(); renderTasks(); document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebarOverlay').classList.remove('active'); document.getElementById('currentFolderName').textContent = (folders.find(f=>f.id===id)?.id==='all')?t('allTasks'):folders.find(f=>f.id===id)?.name||t('allTasks'); }
 
-function deleteFolder(id) { if (id==='all') return; if (!confirm('Удалить папку и все задачи в ней?')) return; folders = folders.filter(f=>f.id!==id); tasks = tasks.filter(t=>t.folderId!==id); if (currentFolder===id) currentFolder='all'; save(); renderFolders(); renderTasks(); document.getElementById('currentFolderName').textContent=t('allTasks'); }
+function deleteFolder(id) { if (id==='all') return; folders = folders.filter(f=>f.id!==id); tasks = tasks.filter(t=>t.folderId!==id); if (currentFolder===id) currentFolder='all'; save(); renderFolders(); renderTasks(); document.getElementById('currentFolderName').textContent=t('allTasks'); }
 
-document.getElementById('addFolderBtn').addEventListener('click',()=>{editingFolderId=null;document.getElementById('folderNameInput').value='';document.getElementById('folderColor').value='#4a90d9';document.getElementById('folderModalTitle').textContent=t('newFolder');document.getElementById('folderModal').classList.add('active');});
-document.getElementById('saveFolderBtn').addEventListener('click',()=>{const name=document.getElementById('folderNameInput').value.trim();if(!name)return;if(editingFolderId){const f=folders.find(f=>f.id===editingFolderId);if(f){f.name=name;f.color=document.getElementById('folderColor').value;}}else{folders.push({id:'f_'+Date.now(),name,color:document.getElementById('folderColor').value});}save();renderFolders();document.getElementById('folderModal').classList.remove('active');});
-document.getElementById('cancelFolderBtn').addEventListener('click',()=>{document.getElementById('folderModal').classList.remove('active');});
+document.getElementById('addFolderBtn').addEventListener('click', () => {
+    editingFolderId = null;
+    document.getElementById('folderNameInput').value = '';
+    document.getElementById('folderColor').value = '#4a90d9';
+    document.getElementById('folderModalTitle').textContent = t('newFolder');
+    const delBtn = document.getElementById('deleteFolderBtn');
+    if (delBtn) delBtn.style.display = 'none';
+    document.getElementById('folderModal').classList.add('active');
+});
+
+function editFolder(id) {
+    const folder = folders.find(f => f.id === id);
+    if (!folder) return;
+    editingFolderId = id;
+    document.getElementById('folderNameInput').value = folder.name;
+    document.getElementById('folderColor').value = folder.color;
+    document.getElementById('folderModalTitle').textContent = t('editFolder');
+    const modalContent = document.querySelector('#folderModal .modal-content');
+    let delBtn = document.getElementById('deleteFolderBtn');
+    if (!delBtn) {
+        delBtn = document.createElement('button');
+        delBtn.id = 'deleteFolderBtn';
+        delBtn.className = 'btn btn-cancel';
+        delBtn.textContent = '🗑 Удалить папку';
+        delBtn.style.marginTop = '10px';
+        delBtn.onclick = () => {
+            if (confirm('Удалить папку и все задачи в ней?')) {
+                deleteFolder(editingFolderId);
+                document.getElementById('folderModal').classList.remove('active');
+            }
+        };
+        modalContent.appendChild(delBtn);
+    }
+    delBtn.style.display = 'block';
+    document.getElementById('folderModal').classList.add('active');
+}
+
+document.getElementById('saveFolderBtn').addEventListener('click', () => {
+    const name = document.getElementById('folderNameInput').value.trim();
+    if (!name) return;
+    if (editingFolderId) {
+        const f = folders.find(f => f.id === editingFolderId);
+        if (f) { f.name = name; f.color = document.getElementById('folderColor').value; }
+    } else {
+        folders.push({ id: 'f_' + Date.now(), name, color: document.getElementById('folderColor').value });
+    }
+    save(); renderFolders();
+    document.getElementById('folderModal').classList.remove('active');
+});
+
+document.getElementById('cancelFolderBtn').addEventListener('click', () => {
+    document.getElementById('folderModal').classList.remove('active');
+    const delBtn = document.getElementById('deleteFolderBtn');
+    if (delBtn) delBtn.style.display = 'none';
+});
 
 function renderTasks() {
     const filtered = currentFolder==='all'?tasks:tasks.filter(t=>t.folderId===currentFolder);
@@ -65,7 +117,6 @@ document.getElementById('taskImage').addEventListener('change',function(){const 
 function toggleTask(id){const t=tasks.find(t=>t.id===id);if(!t)return;const total=t.repeat||1;t.progress=(t.progress||0)>=total?0:(t.progress||0)+1;save();renderTasks();}
 function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);save();renderTasks();}
 
-// Календарь
 document.getElementById('calendarBtn').addEventListener('click',()=>{const now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();selectedDate=null;renderCalendar();document.getElementById('calendarScreen').classList.add('active');});
 document.getElementById('closeCalendarBtn').addEventListener('click',()=>{document.getElementById('calendarScreen').classList.remove('active');renderTasks();});
 document.getElementById('calPrev').addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}selectedDate=null;renderCalendar();});
@@ -75,17 +126,12 @@ function selectCalendarDate(d){selectedDate=d;renderCalendar();}
 function addTaskForDate(d){document.getElementById('calendarScreen').classList.remove('active');document.getElementById('taskDeadline').value=d+'T12:00';document.getElementById('previewDeadline').textContent=new Date(d+'T12:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});editingTaskId=null;document.getElementById('modalTitle').textContent=t('newTask');document.getElementById('taskNameInput').value='';document.getElementById('taskColor').value='#e94560';document.getElementById('taskRepeat').value='1';document.getElementById('taskImage').value='';document.getElementById('imagePreview').style.display='none';document.getElementById('colorPreview').style.background='#e94560';document.getElementById('taskModal').classList.add('active');}
 function openTaskFromCalendar(id){document.getElementById('calendarScreen').classList.remove('active');openTask(id);}
 
-// Статистика
 document.getElementById('statsBtn').addEventListener('click',()=>{const done=tasks.filter(t=>(t.progress||0)>=(t.repeat||1)).length;const overdue=tasks.filter(t=>t.deadline&&new Date(t.deadline)<new Date()&&(t.progress||0)<(t.repeat||1)).length;const active=tasks.length-done-overdue;document.getElementById('statDone').textContent=done;document.getElementById('statActive').textContent=Math.max(0,active);document.getElementById('statOverdue').textContent=overdue;const canvas=document.getElementById('statsChart'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,220,220);const total=tasks.length||1,colors=['#4caf84','#e94560','#ff9800'],values=[done,Math.max(0,active),overdue];let start=-Math.PI/2;values.forEach((v,i)=>{const slice=(v/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(110,110);ctx.arc(110,110,90,start,start+slice);ctx.fillStyle=colors[i];ctx.fill();start+=slice;});ctx.beginPath();ctx.arc(110,110,45,0,Math.PI*2);ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--bg').trim();ctx.fill();document.getElementById('statsScreen').classList.add('active');});
 document.getElementById('closeStatsBtn').addEventListener('click',()=>document.getElementById('statsScreen').classList.remove('active'));
-
-// Настройки
 document.getElementById('settingsBtn').addEventListener('click',()=>{document.getElementById('themeSelect').value=currentTheme;document.getElementById('langSelect').value=lang;document.getElementById('settingsScreen').classList.add('active');});
 document.getElementById('closeSettingsBtn').addEventListener('click',()=>document.getElementById('settingsScreen').classList.remove('active'));
 document.getElementById('themeSelect').addEventListener('change',function(){currentTheme=this.value;document.body.className=currentTheme;localStorage.setItem('btd_theme',currentTheme);});
 document.getElementById('langSelect').addEventListener('change',function(){lang=this.value;localStorage.setItem('btd_lang',lang);location.reload();});
-
-// Поддержка
 document.getElementById('supportBtn').addEventListener('click',()=>window.open('https://t.me/Baton_C_H_I_K','_blank'));
 
 renderFolders(); renderTasks(); document.getElementById('currentFolderName').textContent=t('allTasks');
