@@ -1,12 +1,3 @@
-const L = {
-    ru: { welcome:'👋 Добро пожаловать!',welcomeText:'Это твой список задач.',gotIt:'Понятно!',newTask:'Новая задача',editTask:'Редактировать',save:'Сохранить',cancel:'Отмена',allTasks:'Все задачи',noTasks:'Нет задач. Нажми + чтобы добавить.',newFolder:'Новая папка',editFolder:'Редактировать папку',createTask:'Создать задачу',tasksOnDate:'Задачи на',noTasksOnDate:'Нет задач на этот день',stats:'📊 Статистика',done:'✅ Сделано',active:'📋 Активно',overdue:'⏰ Просрочено',settings:'⚙️ Настройки',theme:'Тема',light:'Светлая',dark:'Тёмная',lang:'Язык',reset:'Пройти обучение заново',close:'Закрыть',foldersTitle:'📁 Папки',calendar:'📅 Календарь',support:'💬 Поддержка',taskName:'Название задачи',repeat:'🔢 Количество раз',deadline:'📅 Дедлайн',color:'🎨 Цвет',image:'🖼 Картинка',January:'Январь',February:'Февраль',March:'Март',April:'Апрель',May:'Май',June:'Июнь',July:'Июль',August:'Август',September:'Сентябрь',October:'Октябрь',November:'Ноябрь',December:'Декабрь' },
-    en: { welcome:'👋 Welcome!',welcomeText:'This is your to-do list.',gotIt:'Got it!',newTask:'New task',editTask:'Edit',save:'Save',cancel:'Cancel',allTasks:'All tasks',noTasks:'No tasks.',newFolder:'New folder',editFolder:'Edit folder',createTask:'Create task',tasksOnDate:'Tasks on',noTasksOnDate:'No tasks',stats:'📊 Statistics',done:'✅ Done',active:'📋 Active',overdue:'⏰ Overdue',settings:'⚙️ Settings',theme:'Theme',light:'Light',dark:'Dark',lang:'Language',reset:'Show onboarding again',close:'Close',foldersTitle:'📁 Folders',calendar:'📅 Calendar',support:'💬 Support',taskName:'Task name',repeat:'🔢 Times',deadline:'📅 Deadline',color:'🎨 Color',image:'🖼 Image',January:'January',February:'February',March:'March',April:'April',May:'May',June:'June',July:'July',August:'August',September:'September',October:'October',November:'November',December:'December' }
-};
-let lang = localStorage.getItem('btd_lang') || 'ru';
-function t(key) { return L[lang][key] || key; }
-let currentTheme = localStorage.getItem('btd_theme') || 'light';
-document.body.className = currentTheme;
-
 let folders = JSON.parse(localStorage.getItem('btd2_folders') || '[{"id":"all","name":"Все задачи","color":"#5c6bc0"}]');
 let tasks = JSON.parse(localStorage.getItem('btd2_tasks') || '[]');
 let currentFolder = 'all', editingTaskId = null, editingFolderId = null;
@@ -33,61 +24,23 @@ function selectFolder(id) { currentFolder=id; renderFolders(); renderTasks(); do
 
 function deleteFolder(id) { if (id==='all') return; folders = folders.filter(f=>f.id!==id); tasks = tasks.filter(t=>t.folderId!==id); if (currentFolder===id) currentFolder='all'; save(); renderFolders(); renderTasks(); document.getElementById('currentFolderName').textContent=t('allTasks'); }
 
-document.getElementById('addFolderBtn').addEventListener('click', () => {
-    editingFolderId = null;
-    document.getElementById('folderNameInput').value = '';
-    document.getElementById('folderColor').value = '#4a90d9';
-    document.getElementById('folderModalTitle').textContent = t('newFolder');
-    const delBtn = document.getElementById('deleteFolderBtn');
-    if (delBtn) delBtn.style.display = 'none';
-    document.getElementById('folderModal').classList.add('active');
-});
+document.getElementById('addFolderBtn').addEventListener('click', () => { editingFolderId=null; document.getElementById('folderNameInput').value=''; document.getElementById('folderColor').value='#4a90d9'; document.getElementById('folderModalTitle').textContent=t('newFolder'); const delBtn=document.getElementById('deleteFolderBtn'); if(delBtn)delBtn.style.display='none'; document.getElementById('folderModal').classList.add('active'); });
 
 function editFolder(id) {
-    const folder = folders.find(f => f.id === id);
-    if (!folder) return;
+    const folder = folders.find(f => f.id === id); if (!folder) return;
     editingFolderId = id;
     document.getElementById('folderNameInput').value = folder.name;
     document.getElementById('folderColor').value = folder.color;
     document.getElementById('folderModalTitle').textContent = t('editFolder');
     const modalContent = document.querySelector('#folderModal .modal-content');
     let delBtn = document.getElementById('deleteFolderBtn');
-    if (!delBtn) {
-        delBtn = document.createElement('button');
-        delBtn.id = 'deleteFolderBtn';
-        delBtn.className = 'btn btn-cancel';
-        delBtn.textContent = '🗑 Удалить папку';
-        delBtn.style.marginTop = '10px';
-        delBtn.onclick = () => {
-            if (confirm('Удалить папку и все задачи в ней?')) {
-                deleteFolder(editingFolderId);
-                document.getElementById('folderModal').classList.remove('active');
-            }
-        };
-        modalContent.appendChild(delBtn);
-    }
-    delBtn.style.display = 'block';
+    if (!delBtn) { delBtn = document.createElement('button'); delBtn.id = 'deleteFolderBtn'; delBtn.className = 'btn btn-cancel'; delBtn.style.marginTop = '10px'; delBtn.onclick = () => { if (confirm(t('confirmDelete'))) { deleteFolder(editingFolderId); document.getElementById('folderModal').classList.remove('active'); } }; modalContent.appendChild(delBtn); }
+    delBtn.textContent = t('deleteFolder'); delBtn.style.display = 'block';
     document.getElementById('folderModal').classList.add('active');
 }
 
-document.getElementById('saveFolderBtn').addEventListener('click', () => {
-    const name = document.getElementById('folderNameInput').value.trim();
-    if (!name) return;
-    if (editingFolderId) {
-        const f = folders.find(f => f.id === editingFolderId);
-        if (f) { f.name = name; f.color = document.getElementById('folderColor').value; }
-    } else {
-        folders.push({ id: 'f_' + Date.now(), name, color: document.getElementById('folderColor').value });
-    }
-    save(); renderFolders();
-    document.getElementById('folderModal').classList.remove('active');
-});
-
-document.getElementById('cancelFolderBtn').addEventListener('click', () => {
-    document.getElementById('folderModal').classList.remove('active');
-    const delBtn = document.getElementById('deleteFolderBtn');
-    if (delBtn) delBtn.style.display = 'none';
-});
+document.getElementById('saveFolderBtn').addEventListener('click', () => { const name=document.getElementById('folderNameInput').value.trim(); if(!name)return; if(editingFolderId){ const f=folders.find(f=>f.id===editingFolderId); if(f){f.name=name;f.color=document.getElementById('folderColor').value;} } else { folders.push({id:'f_'+Date.now(),name,color:document.getElementById('folderColor').value}); } save(); renderFolders(); document.getElementById('folderModal').classList.remove('active'); });
+document.getElementById('cancelFolderBtn').addEventListener('click', () => { document.getElementById('folderModal').classList.remove('active'); const delBtn=document.getElementById('deleteFolderBtn'); if(delBtn)delBtn.style.display='none'; });
 
 function renderTasks() {
     const filtered = currentFolder==='all'?tasks:tasks.filter(t=>t.folderId===currentFolder);
