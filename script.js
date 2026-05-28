@@ -87,4 +87,18 @@ document.getElementById('themeSelect').addEventListener('change',function(){curr
 document.getElementById('langSelect').addEventListener('change',function(){lang=this.value;localStorage.setItem('btd_lang',lang);location.reload();});
 document.getElementById('supportBtn').addEventListener('click',()=>window.open('https://t.me/Baton_C_H_I_K','_blank'));
 
+function translateUI() {
+    document.getElementById('currentFolderName').textContent = t('allTasks');
+    document.querySelector('.sidebar-header h3').textContent = t('foldersTitle');
+    document.getElementById('calendarBtn').textContent = t('calendar');
+    document.getElementById('statsBtn').textContent = t('stats');
+    document.getElementById('supportBtn').textContent = t('support');
+    document.getElementById('settingsBtn').textContent = t('settings');
+    document.getElementById('closeCalendarBtn').textContent = t('close');
+    document.getElementById('closeStatsBtn').textContent = t('close');
+    document.getElementById('closeSettingsBtn').textContent = t('close');
+    document.getElementById('resetOnboardingBtn').textContent = t('reset');
+}
+
+translateUI();
 renderFolders(); renderTasks(); document.getElementById('currentFolderName').textContent=t('allTasks');
