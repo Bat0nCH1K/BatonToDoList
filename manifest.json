@@ -1,0 +1,19 @@
+{
+  "name": "BatonToDoList",
+  "short_name": "BatonToDoList",
+  "start_url": "https://bat0nch1k.github.io/BatonToDoList/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e94560",
+  "icons": [{
+    "src": "1000050539.png",
+    "sizes": "192x192",
+    "type": "image/png",
+    "purpose": "any"
+  }, {
+    "src": "1000050537.png",
+    "sizes": "512x512",
+    "type": "image/png",
+    "purpose": "any"
+  }]
+}
