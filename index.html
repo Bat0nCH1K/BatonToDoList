@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>BatonToDoList v2.2</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#e94560">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="light">
@@ -32,6 +36,7 @@
             <div class="sidebar-footer">
                 <button class="btn-sm" id="calendarBtn">📅 Календарь</button>
                 <button class="btn-sm" id="statsBtn">📊 Статистика</button>
+                <button class="btn-sm" id="installBtn">📲 Установить приложение</button>
                 <button class="btn-sm" id="supportBtn">💬 Поддержка</button>
                 <button class="btn-sm" id="settingsBtn">⚙️ Настройки</button>
             </div>
@@ -102,5 +107,49 @@
 
     <script src="lang.js"></script>
     <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+        
+        // Кнопка установки PWA
+        (function() {
+            const installBtn = document.getElementById('installBtn');
+            if (!installBtn) return;
+            
+            let deferredPrompt;
+            
+            if (localStorage.getItem('pwa-todo-installed') === '1' || 
+                window.matchMedia('(display-mode: standalone)').matches) {
+                installBtn.style.display = 'none';
+                return;
+            }
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.style.display = '';
+            });
+            
+            installBtn.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((result) => {
+                        if (result.outcome === 'accepted') {
+                            localStorage.setItem('pwa-todo-installed', '1');
+                            installBtn.style.display = 'none';
+                        }
+                    });
+                } else {
+                    alert('Нажми ⋮ (меню) → «Добавить на главный экран»');
+                }
+            });
+            
+            setTimeout(() => {
+                if (!deferredPrompt && installBtn.style.display !== 'none' && 
+                    localStorage.getItem('pwa-todo-installed') !== '1') {
+                    installBtn.style.display = '';
+                }
+            }, 5000);
+        })();
+    </script>
 </body>
 </html>
