@@ -13,7 +13,24 @@ const L = {
         foldersTitle: '📁 Папки', calendar: '📅 Календарь', support: '💬 Поддержка',
         taskName: 'Название задачи', repeat: '🔢 Количество раз', deadline: '📅 Дедлайн',
         color: '🎨 Цвет', image: '🖼 Картинка',
-        deleteFolder: '🗑 Удалить папку', confirmDelete: 'Удалить папку и все задачи в ней?'
+        deleteFolder: '🗑 Удалить папку', confirmDelete: 'Удалить папку и все задачи в ней?',
+
+        // Новое: выполненные
+        completed: '✅ Выполненные',
+        noCompleted: 'Нет выполненных задач.',
+
+        // Новое: напоминания
+        reminder: '🔔 Напомнить',
+        reminderNever: 'Не напоминать',
+        reminderHour: 'За 1 час',
+        reminder3h: 'За 3 часа',
+        reminder6h: 'За 6 часов',
+        reminder12h: 'За 12 часов',
+        reminderDay: 'За 1 день',
+        reminder2d: 'За 2 дня',
+        notifTitle: 'BatonToDoList',
+        notifBody: 'Дедлайн задачи:',
+        notifDenied: 'Уведомления запрещены. Разрешите их в настройках браузера.'
     },
     en: {
         welcome: '👋 Welcome to BatonToDoList!',
@@ -29,7 +46,22 @@ const L = {
         foldersTitle: '📁 Folders', calendar: '📅 Calendar', support: '💬 Support',
         taskName: 'Task name', repeat: '🔢 Times', deadline: '📅 Deadline',
         color: '🎨 Color', image: '🖼 Image',
-        deleteFolder: '🗑 Delete folder', confirmDelete: 'Delete folder and all tasks in it?'
+        deleteFolder: '🗑 Delete folder', confirmDelete: 'Delete folder and all tasks in it?',
+
+        completed: '✅ Completed',
+        noCompleted: 'No completed tasks.',
+
+        reminder: '🔔 Remind me',
+        reminderNever: 'Do not remind',
+        reminderHour: 'In 1 hour',
+        reminder3h: 'In 3 hours',
+        reminder6h: 'In 6 hours',
+        reminder12h: 'In 12 hours',
+        reminderDay: 'In 1 day',
+        reminder2d: 'In 2 days',
+        notifTitle: 'BatonToDoList',
+        notifBody: 'Task deadline:',
+        notifDenied: 'Notifications are blocked. Allow them in browser settings.'
     }
 };
 let lang = localStorage.getItem('btd_lang') || 'ru';
