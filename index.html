@@ -2,9 +2,10 @@
 <html lang="ru">
 <head>
     <link rel="icon" href="1000050539.png">
+    <link rel="apple-touch-icon" href="1000050539.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>BatonToDoList v2.2</title>
+    <title>BatonToDoList v2.3</title>
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,6 +52,17 @@
             <input type="text" id="taskNameInput" placeholder="Название задачи">
             <label id="labelDeadline">📅 Дедлайн: <input type="datetime-local" id="taskDeadline"></label>
             <div class="preview-deadline" id="previewDeadline"></div>
+            <label id="labelReminder">🔔 Напомнить:
+                <select id="taskReminder">
+                    <option value="0">Не напоминать</option>
+                    <option value="1">За 1 час</option>
+                    <option value="3">За 3 часа</option>
+                    <option value="6">За 6 часов</option>
+                    <option value="12">За 12 часов</option>
+                    <option value="24">За 1 день</option>
+                    <option value="48">За 2 дня</option>
+                </select>
+            </label>
             <label id="labelColor">🎨 Цвет: <input type="color" id="taskColor" value="#e94560"><span class="color-preview" id="colorPreview" style="background:#e94560"></span></label>
             <label id="labelRepeat">🔢 Количество раз: <input type="number" id="taskRepeat" value="1" min="1" max="99"></label>
             <label id="labelImage">🖼 Картинка: <input type="file" id="taskImage" accept="image/*"></label>
@@ -104,32 +116,31 @@
         <button class="btn" id="closeSettingsBtn">Закрыть</button>
     </div>
 
-    <div class="version">v2.2 — BatonToDoList</div>
+    <div class="version">v2.3 — BatonToDoList</div>
 
     <script src="lang.js"></script>
     <script src="script.js"></script>
     <script>
         if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-        
-        // Кнопка установки PWA
+
         (function() {
             const installBtn = document.getElementById('installBtn');
             if (!installBtn) return;
-            
+
             let deferredPrompt;
-            
-            if (localStorage.getItem('pwa-todo-installed') === '1' || 
+
+            if (localStorage.getItem('pwa-todo-installed') === '1' ||
                 window.matchMedia('(display-mode: standalone)').matches) {
                 installBtn.style.display = 'none';
                 return;
             }
-            
+
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
                 installBtn.style.display = '';
             });
-            
+
             installBtn.addEventListener('click', () => {
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
@@ -143,9 +154,9 @@
                     alert('Нажми ⋮ (меню) → «Добавить на главный экран»');
                 }
             });
-            
+
             setTimeout(() => {
-                if (!deferredPrompt && installBtn.style.display !== 'none' && 
+                if (!deferredPrompt && installBtn.style.display !== 'none' &&
                     localStorage.getItem('pwa-todo-installed') !== '1') {
                     installBtn.style.display = '';
                 }
